@@ -37,8 +37,22 @@ adk web                                          # 開 http://localhost:8000
 | Tool | 檔案 | 說明 |
 | --- | --- | --- |
 | `lookup_room` | `tools/ncku_room.py` | 教室代碼／名稱 → 大樓與樓層 |
+| `lookup_building` | `tools/ncku_building.py` | 全校任一建築物名稱／關鍵字查詢，不限於已知教室 |
 | `get_parking_availability` | `tools/ncku_parking.py` | 校區＋車種 → 即時剩餘車位（依車位數排序） |
-| `build_walking_link` | `tools/walking_link.py` | 大樓名稱 → Google Maps 步行導航連結（純函式，不需金鑰） |
+| `estimate_travel_time` | `tools/travel_time.py` | 起點＋終點＋車種 → 真實通勤時間（**需要 `GOOGLE_MAPS_API_KEY`，未設定時誠實回報 unavailable，絕不編造數字**） |
+| `build_walking_link` | `tools/walking_link.py` | 大樓名稱 → Google Maps 步行導航連結（純函式，不需金鑰，僅作為補充選項） |
+
+Agent 的設計原則：不是查一個地點就丟一個地圖連結給使用者，而是主動比較
+機車／汽車的即時停車位與（有金鑰時的）真實通勤時間，用文字給出「建議騎
+什麼車、停哪裡、怎麼走」的具體結論，Google Maps 連結只作為想要即時路況
+導航時的補充選項。
+
+## 團隊 `.env` 設定注意事項
+
+每個人請執行 `Copy-Item .env.example .env`，**只需要改 `GEMINI_API_KEY` 這一行**，
+其他項目都有預設值，不要自行更動，以免大家本機行為對不上。
+**每個人請申請自己的 Gemini API Key**，不要共用同一把：AI Studio 免費額度是
+以帳號為單位計算，共用會互搶額度，demo 當天容易被限流。
 
 ## 尚未完成
 
