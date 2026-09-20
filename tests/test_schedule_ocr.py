@@ -187,3 +187,30 @@ def test_extract_reports_missing_key_without_calling_model(monkeypatch):
                                                        "timezone": "Asia/Taipei"})())
     with pytest.raises(ocr.OCRError, match="尚未設定"):
         ocr.extract_schedule_from_image(b"fake-png-bytes", "image/png")
+
+
+def test_extract_reports_gemini_quota_without_raw_sdk_error(monkeypatch):
+    class QuotaError(Exception):
+        code = 429
+
+    class FakeModels:
+        def generate_content(self, **kwargs):
+            raise QuotaError("429 RESOURCE_EXHAUSTED internal details")
+
+    class FakeClient:
+        models = FakeModels()
+
+    monkeypatch.setattr(ocr, "load_settings",
+                        lambda *a, **k: type("S", (), {
+                            "gemini_api_key": "test-key",
+                            "gemini_model": "m",
+                            "timezone": "Asia/Taipei",
+                        })())
+    monkeypatch.setattr("google.genai.Client", lambda **kwargs: FakeClient())
+
+    with pytest.raises(ocr.OCRError) as exc_info:
+        ocr.extract_schedule_from_image(b"fake-png-bytes", "image/png")
+
+    message = str(exc_info.value)
+    assert "HTTP 429" in message
+    assert "RESOURCE_EXHAUSTED" not in message

@@ -15,6 +15,8 @@
 from __future__ import annotations
 
 from commute_agent.tools.floor_plan import describe_floor, get_floor_plan
+from commute_agent.tools.ncku_campusmap import (campus_map_url, get_building_footprint,
+                                                is_on_main_campus)
 from commute_agent.tools.ncku_floorplan import (floor_plan_url, get_rooms_on_floor,
                                                 locate_room_on_plan)
 from commute_agent.skills.locate_place import locate_course_place
@@ -47,7 +49,36 @@ def _live_plan(build_id: str, floor: str, room_code: str) -> dict | None:
             "caption": f"{build_id} {floor} 平面圖（成大地理資訊系統）",
             "floor": floor, "floors": image["floors"], "layer": image["layer"],
             "width": image["width"], "height": image["height"],
-            "highlight": highlight, "available": True}
+            "highlight": highlight,
+            "available": True}
+
+
+def _campus_plan(build_id: str, floor: str = "", room_code: str = "") -> dict | None:
+    """校園全圖：把目標大樓在整個主校區的位置框出來。
+
+    跟 _live_plan 框教室是同一套作法，只是範圍換成主校區、圖層換成全校建物
+    外框。不在主校區索引裡的大樓（力行、建國等其他校區）沒有這張圖。
+    """
+    if not build_id or not is_on_main_campus(build_id):
+        return None
+    image = campus_map_url()
+    if image["status"] != "ok":
+        return None
+
+    footprint = get_building_footprint(build_id)
+    highlight = locate_room_on_plan(footprint, image["bbox"]) if footprint else None
+    highlight_label = room_code or build_id
+    if room_code and floor:
+        rooms = get_rooms_on_floor(build_id, floor)
+        for room in rooms.get("rooms", []):
+            if room.get("room_code") == room_code and room.get("bounds"):
+                highlight = locate_room_on_plan(room["bounds"], image["bbox"])
+                break
+
+    return {"status": "ok", "source": "geoserver", "url": image["url"],
+            "caption": f"{build_id} 在主校區的位置（成大地理資訊系統）",
+            "highlight": highlight, "highlight_label": highlight_label,
+            "available": True}
 
 
 def _static_plan(plan: dict) -> dict:
@@ -108,6 +139,8 @@ def locate_classroom(room_query: str, origin: str = "",
         - floor_plan: 該樓層的平面圖。source 為 "geoserver" 時是成大即時圖層，
           highlight 是目標教室在圖上的位置（百分比），floors 是這棟還有哪幾層；
           source 為 "picture" 時是人工截圖的備援
+        - campus_map: 主校區全圖，highlight 是目標大樓在圖上的位置（百分比）；
+          大樓不在主校區索引裡時退回沒有 highlight 的靜態截圖
         - route_link: 前往該大樓的導航連結
         - conclusion: 一句話結論，可直接顯示給使用者
     """
@@ -177,6 +210,7 @@ def locate_classroom(room_query: str, origin: str = "",
     # 「這間教室屬於這棟的這一層」。用文字換出來的大樓配上別處來的樓層，
     # 有可能拼出一張根本不含那間教室的平面圖，寧可用截圖
     image = (_live_plan(build_id, floor, room_code) if chosen else None) or _static_plan(plan)
+    campus_map = _campus_plan(build_id, floor, room_code) or plan["campus_map"]
 
     return {
         "status": "ok" if chosen else "not_found",
@@ -196,7 +230,7 @@ def locate_classroom(room_query: str, origin: str = "",
                      "status": located.get("status")},
         "floor_plan": image,
         "floor_plan_lookup": plan,
-        "campus_map": plan["campus_map"],
+        "campus_map": campus_map,
         "route_link": build_route_link(target, origin=origin or None,
                                        travel_mode=travel_mode),
         "conclusion": _conclusion(room_code or query, building, floor, floor_source),

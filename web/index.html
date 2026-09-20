@@ -309,6 +309,11 @@
 
   <div class="banner" id="banner"></div>
 
+  <section class="card" id="routeUpdate" hidden>
+    <p class="label">路線更新</p>
+    <div id="routeUpdateContent"></div>
+  </section>
+
   <section class="card" id="uploadCard"></section>
 
   <section class="card" id="demoCard" hidden>
@@ -331,6 +336,7 @@
       <button type="button" class="ghost" id="askNotify">開啟桌面通知</button>
       <button type="button" class="ghost" id="pushPhone">推播到手機</button>
     </div>
+    <p><button type="button" class="ghost" id="demoRouteUpdate">模擬路線增加 5 分鐘</button></p>
     <div id="scenarioBox" hidden>
       <div class="chips" id="scenarioChips"></div>
       <p class="note" id="scenarioNote"></p>
@@ -521,13 +527,13 @@ const FLOOR_SOURCE_NOTE = {
   room_code: "成大 GIS 查不到，樓層由教室代碼推算。",
 };
 
-function renderPlanImage(image, highlight) {
+function renderPlanImage(image, highlight, label = "這裡") {
   if (!image || !image.url) {
     return `<p class="note">${esc((image && image.error_message) || "沒有這一層的平面圖。")}</p>`;
   }
   const mark = highlight
     ? `<div class="plan-mark" style="left:${highlight.left}%;top:${highlight.top}%;
-         width:${highlight.width}%;height:${highlight.height}%"><span>這裡</span></div>`
+         width:${highlight.width}%;height:${highlight.height}%"><span>${esc(label)}</span></div>`
     : "";
   return `<figure class="plan"><div class="plan-wrap">
       <img src="${esc(image.url)}" alt="${esc(image.caption || "平面圖")}">${mark}</div>
@@ -549,8 +555,9 @@ function renderClassroom() {
   const plan = r.floor_plan || {};
   const shown = planOverride || plan;
   const figure = classroomView === "campus"
-    ? renderPlanImage(r.campus_map, null)
-    : renderPlanImage(shown, shown === plan ? plan.highlight : null);
+    ? renderPlanImage(r.campus_map, r.campus_map && r.campus_map.highlight,
+        r.campus_map && (r.campus_map.highlight_label || r.room_code || r.building_id))
+    : renderPlanImage(shown, shown === plan ? plan.highlight : null, r.room_code);
 
   // 這棟每一層都有圖層時，讓使用者自己翻樓層——找不到教室時常常是記錯樓
   const floorTabs = (plan.floors || []).map(f =>
@@ -1133,6 +1140,12 @@ function renderParking(data) {
   box.innerHTML = html;
 }
 
+function isClosedRoadEvent(event) {
+  const text = [event.description, event.category, event.road_name]
+    .filter(Boolean).join(" ");
+  return event.is_closure || /封閉|封路|禁止通行|管制|施工/.test(text);
+}
+
 function renderEventSide(label, side) {
   if (!side.resolved) {
     return `<p class="label">${esc(label)}</p><p class="note">${esc(side.note)}</p>`;
@@ -1140,16 +1153,23 @@ function renderEventSide(label, side) {
   if (side.note) {
     return `<p class="label">${esc(label)}・${esc(side.name)}</p><p class="err">${esc(side.note)}</p>`;
   }
-  if (!side.events.length) {
+  const events = side.events || [];
+  const closureCount = Number(side.closure_count || 0)
+    || events.filter(isClosedRoadEvent).length;
+  const closureWarning = side.has_closed_route || closureCount
+    ? `<p class="note warn">⚠ 導航路線有 ${closureCount || 1} 件封閉路段或交通管制，請改道。</p>`
+    : "";
+  if (!events.length) {
     return `<p class="label">${esc(label)}・${esc(side.name)}</p><p class="event-clear">附近沒有回報的路況事件</p>`;
   }
-  const rows = side.events.map(e => {
+  const rows = events.map(e => {
     const what = e.description || (e.type_is_code ? `分類代碼 ${e.type_code}` : "（無說明）");
-    const tag = e.category ? `<span class="badge">${esc(e.category)}</span> ` : "";
+    const tag = (isClosedRoadEvent(e) ? `<span class="badge">封閉路段</span> ` : "")
+      + (e.category ? `<span class="badge">${esc(e.category)}</span> ` : "");
     return `<div class="event"><div class="dist">${e.distance_m}m</div>
       <div><b>${tag}${esc(what)}</b><div class="meta">${esc(e.road_name || "（無地點資訊）")}</div></div></div>`;
   }).join("");
-  return `<p class="label">${esc(label)}・${esc(side.name)}</p>${rows}`;
+  return `<p class="label">${esc(label)}・${esc(side.name)}</p>${closureWarning}${rows}`;
 }
 
 function renderRoadEvents(data) {
@@ -1187,6 +1207,67 @@ let bikePick = { from: null, to: null }, bikeJourney = null;
 let mode = "walking", vehicle = "機車", origin = "";
 let simNow = "", leadMin = 30;
 let lastData = null, notice = null, pollTimer = null, bannerSig = "", notifiedKey = "";
+
+function routeUpdateSignature(data) {
+  const next = (data && data.next_class) || {};
+  const departure = (data && data.departure) || {};
+  const road = (data && data.road_events) || {};
+  const sides = [road.route, road.origin, road.destination].filter(Boolean);
+  const events = sides.flatMap(side => (side.events || []).map(event => ({
+    id: event.id || event.event_id || "",
+    type: event.type || event.category || "",
+    description: event.description || "",
+    road_name: event.road_name || "",
+    distance_m: event.distance_m || null,
+  }))).sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)));
+  return JSON.stringify({
+    class_key: `${next.name || ""}|${next.starts_at || ""}`,
+    route_link: next.route_link || "",
+    travel_minutes: departure.travel_minutes ?? null,
+    distance_m: departure.distance_m ?? null,
+    leave_at: departure.leave_at || "",
+    events,
+  });
+}
+
+function sameUpcomingClass(a, b) {
+  const left = (a && a.next_class) || {}, right = (b && b.next_class) || {};
+  return left.name && left.starts_at && left.name === right.name && left.starts_at === right.starts_at;
+}
+
+function routeUpdateDelta(previous, current) {
+  const before = Number(previous && previous.departure && previous.departure.travel_minutes);
+  const after = Number(current && current.departure && current.departure.travel_minutes);
+  return Number.isFinite(before) && Number.isFinite(after) ? after - before : null;
+}
+
+function showRouteUpdate(previous, current, { demo = false } = {}) {
+  const box = $("routeUpdate"), content = $("routeUpdateContent");
+  const next = (current && current.next_class) || (previous && previous.next_class) || {};
+  const before = previous && previous.departure && previous.departure.travel_minutes;
+  const after = current && current.departure && current.departure.travel_minutes;
+  const delta = routeUpdateDelta(previous, current);
+  const change = delta === null
+    ? "路線資料已變更，請重新確認建議出發時間。"
+    : delta > 0
+      ? `預估路程增加 ${delta} 分鐘，建議提早出發。`
+      : delta < 0
+        ? `預估路程縮短 ${Math.abs(delta)} 分鐘。`
+        : "路線或沿途路況已更新，預估時間沒有變化。";
+  const title = demo ? "展示：路線已更新" : "路線已更新";
+  const times = before !== null && before !== undefined && after !== null && after !== undefined
+    ? `<p class="note">${esc(String(before))} 分鐘 → ${esc(String(after))} 分鐘</p>` : "";
+  box.hidden = false;
+  content.innerHTML = `<h2 class="course-name">${esc(title)}</h2>
+    <p>${esc(next.name || "下一堂課")}：${esc(change)}</p>${times}
+    <p class="note">${demo ? "這是展示資料，不會修改課表或後端資料。" : "系統已在背景輪詢中偵測到變更。"}</p>`;
+
+  if (!demo && "Notification" in window && Notification.permission === "granted") {
+    try {
+      new Notification("路線已更新", { body: `${next.name || "下一堂課"}：${change}` });
+    } catch (e) { /* 瀏覽器可能禁止背景通知 */ }
+  }
+}
 
 // 只存在使用者自己的瀏覽器：私密視窗等情況拿不到儲存空間時，當作沒有，不影響其他功能
 const LS = {
@@ -1408,6 +1489,14 @@ function load() {
         $("hero").innerHTML = `<p class="err">${esc(data.error)}</p>`;
         return;
       }
+      const previousData = lastData;
+      if (previousData && previousData.has_schedule && data.has_schedule
+          && sameUpcomingClass(previousData, data)
+          && routeUpdateSignature(previousData) !== routeUpdateSignature(data)) {
+        showRouteUpdate(previousData, data);
+      } else if (previousData && !sameUpcomingClass(previousData, data)) {
+        $("routeUpdate").hidden = true;
+      }
       lastData = data;
       const now = new Date(data.now);
       $("clock").innerHTML =
@@ -1428,6 +1517,7 @@ function load() {
       if (!data.has_schedule) {
         $("banner").className = "banner";
         bannerSig = "";
+        $("routeUpdate").hidden = true;
         if (data.error) $("uploadCard").innerHTML += `<p class="err">${esc(data.error)}</p>`;
         renderAdjust();
         return;
@@ -1794,6 +1884,23 @@ function jumpTo(minutesBefore) {
 
 $("jumpLead").addEventListener("click", () => jumpTo(leadMin));
 $("jump20").addEventListener("click", () => jumpTo(20));
+
+$("demoRouteUpdate").addEventListener("click", () => {
+  if (!lastData || !lastData.next_class || !lastData.departure) {
+    $("demoNote").textContent = "請先載入課表，才能展示路線更新。";
+    return;
+  }
+  const demoData = JSON.parse(JSON.stringify(lastData));
+  const departure = demoData.departure;
+  if (Number.isFinite(Number(departure.travel_minutes))) {
+    departure.travel_minutes = Number(departure.travel_minutes) + 5;
+  }
+  if (departure.leave_at) {
+    departure.leave_at = new Date(new Date(departure.leave_at).getTime() - 5 * 60000).toISOString();
+  }
+  showRouteUpdate(lastData, demoData, { demo: true });
+  $("demoNote").textContent = "已顯示路線更新通知；這不會修改課表，也不會呼叫外部 API。";
+});
 
 $("backToNow").addEventListener("click", () => {
   simNow = "";

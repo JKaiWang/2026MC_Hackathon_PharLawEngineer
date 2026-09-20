@@ -83,6 +83,32 @@ def test_the_target_room_is_marked_on_the_plan(world):
     assert (mark["top"], mark["height"]) == (60.0, 20.0)
 
 
+def test_campus_map_marks_the_gis_room_and_exposes_its_label(monkeypatch):
+    monkeypatch.setattr(cg, "is_on_main_campus", lambda build_id: True)
+    monkeypatch.setattr(cg, "campus_map_url", lambda: {
+        "status": "ok", "url": "https://gis/campus", "bbox": {
+            "minx": 0.0, "miny": 0.0, "maxx": 100.0, "maxy": 100.0,
+        },
+    })
+    monkeypatch.setattr(cg, "get_building_footprint", lambda build_id: {
+        "minx": 10.0, "miny": 10.0, "maxx": 30.0, "maxy": 30.0,
+    })
+    monkeypatch.setattr(cg, "get_rooms_on_floor", lambda build_id, floor: {
+        "status": "ok", "rooms": [{
+            "room_code": "4264", "bounds": {
+                "minx": 20.0, "miny": 20.0, "maxx": 24.0, "maxy": 24.0,
+            },
+        }],
+    })
+
+    campus = cg._campus_plan("B029", "2F", "4264")
+
+    assert campus["highlight_label"] == "4264"
+    assert campus["highlight"] == {
+        "left": 20.0, "top": 76.0, "width": 4.0, "height": 4.0,
+    }
+
+
 def test_no_mark_when_the_room_is_not_on_that_layer(world):
     state_rooms = {"status": "ok", "rooms": [{"room_code": "9999", "bounds": None}]}
     world["rooms"] = state_rooms

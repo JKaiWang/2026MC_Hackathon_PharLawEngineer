@@ -19,6 +19,15 @@ from commute_agent.tools.road_events import (
 )
 
 CITY = "Tainan"
+_CLOSURE_KEYWORDS = (
+    "\u5c01\u9589", "\u5c01\u8def", "\u7981\u6b62\u901a\u884c", "\u7ba1\u5236", "\u65bd\u5de5",
+)
+
+
+def _is_closed_event(event: dict) -> bool:
+    text = " ".join(str(event.get(key) or "")
+                     for key in ("description", "category", "road_name"))
+    return any(keyword in text for keyword in _CLOSURE_KEYWORDS)
 
 
 def _route_point(place: dict | None, query: str):
@@ -91,16 +100,22 @@ def check_route_events(origin: str, destination: str, radius_m: float = DEFAULT_
         _route_point(origin_place, origin),
         _route_point(destination_place, destination),
         travel_mode,
+        with_path=True,
     )
     route_points = route.get("route_points", []) if route.get("status") == "ok" else []
     if len(route_points) >= 2:
         events = get_road_events_along_route(CITY, route_points, radius_m)
+        route_events = [{**event, "is_closure": _is_closed_event(event)}
+                        for event in events.get("events", [])]
+        closure_count = sum(1 for event in route_events if event["is_closure"])
         route_side = {
             "query": f"{origin} → {destination}",
             "resolved": events["status"] == "ok",
             "name": "Google Maps 路線",
-            "events": events.get("events", []),
-            "count": events.get("count", 0),
+            "events": route_events,
+            "count": len(route_events),
+            "closure_count": closure_count,
+            "has_closed_route": closure_count > 0,
             "note": (events.get("error_message", "")
                      if events["status"] != "ok" else ""),
         }

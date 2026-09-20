@@ -22,7 +22,7 @@ STATUS_HINTS = {
     403: "Gemini 金鑰沒有這個模型的權限",
     402: "Gemini 預付額度已用盡，請到 AI Studio 加值或改用其他金鑰",
     404: "找不到這個 Gemini 模型（可能已下架，請改設定 GEMINI_MODEL）",
-    429: "Gemini 請求太頻繁，已達速率上限",
+    429: "Gemini 請求速率／免費額度已達上限，請稍後重試或檢查 AI Studio 計費與配額",
     500: "Gemini 伺服器錯誤",
     503: "Gemini 目前流量過大",
     504: "Gemini 回應逾時",

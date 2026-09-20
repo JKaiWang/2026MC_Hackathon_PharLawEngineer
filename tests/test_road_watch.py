@@ -107,7 +107,7 @@ def test_route_events_cover_the_path_between_endpoints(places, monkeypatch):
     monkeypatch.setattr(
         road_watch,
         "compute_route",
-        lambda origin, destination, travel_mode: {
+        lambda origin, destination, travel_mode, with_path=False: {
             "status": "ok", "route_points": [(22.9955, 120.2196),
                                                  (22.9972, 120.2208)]
         },
@@ -126,3 +126,45 @@ def test_route_events_cover_the_path_between_endpoints(places, monkeypatch):
     assert result["status"] == "ok"
     assert result["route"]["count"] == 1
     assert result["route"]["events"][0]["event_id"] == "MID"
+
+
+def test_route_event_query_requests_the_navigation_geometry(places, monkeypatch):
+    places.update({"library": LIBRARY, "csie": CSIE})
+    captured = {}
+
+    def fake_compute_route(origin, destination, travel_mode, with_path=False):
+        captured["with_path"] = with_path
+        return {"status": "ok", "route_points": [
+            (22.9955, 120.2196), (22.9972, 120.2208),
+        ]}
+
+    monkeypatch.setattr(road_watch, "compute_route", fake_compute_route)
+    monkeypatch.setattr(road_watch, "get_road_events_along_route",
+                        lambda city, points, radius_m: {
+                            "status": "ok", "events": [], "count": 0,
+                        })
+
+    road_watch.check_route_events("library", "csie")
+
+    assert captured["with_path"] is True
+
+
+def test_route_result_marks_a_closed_road_event(places, monkeypatch):
+    places.update({"library": LIBRARY, "csie": CSIE})
+    monkeypatch.setattr(road_watch, "compute_route",
+                        lambda *args, **kwargs: {
+                            "status": "ok", "route_points": [
+                                (22.9955, 120.2196), (22.9972, 120.2208),
+                            ]})
+    monkeypatch.setattr(road_watch, "get_road_events_along_route",
+                        lambda city, points, radius_m: {
+                            "status": "ok", "events": [{
+                                **ACCIDENT, "event_id": "CLOSED",
+                                "description": "道路封閉施工",
+                            }], "count": 1,
+                        })
+
+    result = road_watch.check_route_events("library", "csie")
+
+    assert result["route"]["has_closed_route"] is True
+    assert result["route"]["closure_count"] == 1

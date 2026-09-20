@@ -15,6 +15,7 @@ import re
 from typing import Any
 
 from api import load_settings
+from commute_agent.tools.gemini_error import describe
 
 # 允許上傳的圖片格式。課表截圖就是這幾種，不必開更大。
 SUPPORTED_MIME_TYPES = {
@@ -236,7 +237,7 @@ def extract_schedule_from_image(image_bytes: bytes, mime_type: str,
             config=types.GenerateContentConfig(response_mime_type="application/json"),
         )
     except Exception as exc:  # SDK 會丟各種自訂例外，一律轉成本模組的錯誤型別
-        raise OCRError(f"呼叫 Gemini 失敗：{type(exc).__name__}: {exc}") from exc
+        raise OCRError(f"呼叫 Gemini 失敗：{describe(exc)}") from exc
 
     if not (response.text or "").strip():
         raise OCRError("Gemini 沒有回傳內容，可能是圖片看不清楚或被安全政策擋下")
