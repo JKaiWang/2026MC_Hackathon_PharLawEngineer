@@ -1,0 +1,519 @@
+{
+  "UpdateTime": "2026-09-18T19:59:29+08:00",
+  "UpdateInterval": 60,
+  "SrcUpdateTime": "2026-09-18T19:59:29+08:00",
+  "SrcUpdateInterval": 300,
+  "AuthorityCode": "TNN",
+  "LiveEvents": [
+    {
+      "EventID": "395290000H_001-01-20260918195337003",
+      "EventTitle": "緊急救護",
+      "Description": "車禍",
+      "EventType": 1,
+      "EventSubType": 198,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T19:54:15+08:00",
+      "Positions": "POINT (120.28622 23.07702)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "臺南市新市區社內里社內7號"
+      },
+      "Source": "臺南市消防局",
+      "PublishTime": "2026-09-18T19:54:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:58:34+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-20260918194809003",
+      "EventTitle": "緊急救護",
+      "Description": "車禍",
+      "EventType": 1,
+      "EventSubType": 198,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T19:49:06+08:00",
+      "Positions": "POINT (120.20869 23.00104)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "臺南市北區公園路和公園南路的交叉路口"
+      },
+      "Source": "臺南市消防局",
+      "PublishTime": "2026-09-18T19:49:06+08:00",
+      "LastUpdateTime": "2026-09-18T19:58:34+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-20260918194245003",
+      "EventTitle": "緊急救護",
+      "Description": "車禍",
+      "EventType": 1,
+      "EventSubType": 198,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T19:43:10+08:00",
+      "Positions": "POINT (120.23149 22.96192)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "臺南市東區德東街149號"
+      },
+      "Source": "臺南市消防局",
+      "PublishTime": "2026-09-18T19:43:10+08:00",
+      "LastUpdateTime": "2026-09-18T19:58:34+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-20260918191248003",
+      "EventTitle": "緊急救護",
+      "Description": "車禍",
+      "EventType": 1,
+      "EventSubType": 198,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T19:13:25+08:00",
+      "Positions": "POINT (120.18895 22.98614)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "臺南市南區敬南街和文南三街的交叉路口"
+      },
+      "Source": "臺南市消防局",
+      "PublishTime": "2026-09-18T19:13:25+08:00",
+      "LastUpdateTime": "2026-09-18T19:58:34+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-20260918172129004",
+      "EventTitle": "緊急救護",
+      "Description": "車禍",
+      "EventType": 1,
+      "EventSubType": 198,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T17:22:15+08:00",
+      "Positions": "POINT (120.22750 22.99108)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "臺南市東區怡東路21號"
+      },
+      "Source": "臺南市消防局",
+      "PublishTime": "2026-09-18T17:22:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:58:34+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-20260918194656004",
+      "EventTitle": "緊急救護",
+      "Description": "車禍",
+      "EventType": 1,
+      "EventSubType": 198,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T19:47:25+08:00",
+      "Positions": "POINT (120.19363 23.00533)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "臺南市中西區文賢路和武聖路的交叉路口"
+      },
+      "Source": "臺南市消防局",
+      "PublishTime": "2026-09-18T19:47:25+08:00",
+      "LastUpdateTime": "2026-09-18T19:58:34+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX000147-1",
+      "EventTitle": "壅塞",
+      "Description": "永康區中山路(奧迪前-文華路) 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T19:51:15+08:00",
+      "Positions": "POINT (120.24713 22.97294)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "中山路(奧迪前-文華路)"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T19:51:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GN00003",
+      "EventTitle": "壅塞",
+      "Description": "null北外環 長和路一段222巷100弄口至北外環路口 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T19:01:15+08:00",
+      "Positions": "POINT (120.24133 23.05597)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "北外環 長和路一段222巷100弄口至北外環路口"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T19:01:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX300025",
+      "EventTitle": "壅塞",
+      "Description": "null法華街 (五妃街至大同路一段) 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T13:49:19+08:00",
+      "Positions": "POINT (120.20876 22.98258)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "法華街 (五妃街至大同路一段)"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T13:49:19+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX300024",
+      "EventTitle": "壅塞",
+      "Description": "null大同路一段 (府東街至開山路) 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T19:51:15+08:00",
+      "Positions": "POINT (120.21134 22.98732)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "大同路一段 (府東街至開山路)"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T19:51:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX300013",
+      "EventTitle": "極度壅塞",
+      "Description": "null高速一街 (裕德二街至太子路) 發生重度壅塞",
+      "EventType": 3,
+      "EventSubType": 303,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T19:41:15+08:00",
+      "Positions": "POINT (120.24860 22.98703)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "高速一街 (裕德二街至太子路)"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T19:41:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX00082-2",
+      "EventTitle": "壅塞",
+      "Description": "安平區健康/文平路口-健康路-金華路-成功路-文賢路-文賢/中華北路口 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T13:49:19+08:00",
+      "Positions": "POINT (120.18142 22.98261)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "健康/文平路口-健康路-金華路-成功路-文賢路-文賢/中華北路口"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T13:49:19+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX000154",
+      "EventTitle": "極度壅塞",
+      "Description": "仁德區國1仁德北向出口 發生重度壅塞",
+      "EventType": 3,
+      "EventSubType": 303,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T19:56:15+08:00",
+      "Positions": "POINT (120.25022 22.96456)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "國1仁德北向出口"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T19:56:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX00072-1",
+      "EventTitle": "壅塞",
+      "Description": "永康區公園路 六甲頂至成功路(南向) 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T14:16:15+08:00",
+      "Positions": "POINT (120.21633 23.02209)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "公園路 六甲頂至成功路(南向)"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T14:16:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX300026",
+      "EventTitle": "壅塞",
+      "Description": "null大同路一段175巷 (大同路一段197巷至大同路一段) 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T13:49:19+08:00",
+      "Positions": "POINT (120.21323 22.98372)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "大同路一段175巷 (大同路一段197巷至大同路一段)"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T13:49:19+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX000142",
+      "EventTitle": "壅塞",
+      "Description": "永康區國1永康南向出口(往永康) 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T19:31:15+08:00",
+      "Positions": "POINT (120.25289 23.05078)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "國1永康南向出口(往永康)"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T19:31:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX00073-1",
+      "EventTitle": "壅塞",
+      "Description": "永康區小東路 裕永路至北門路(西向) 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T13:49:19+08:00",
+      "Positions": "POINT (120.23982 22.99854)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "小東路 裕永路至北門路(西向)"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T13:49:19+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX000153",
+      "EventTitle": "極度壅塞",
+      "Description": "仁德區國1仁德南向出口 發生重度壅塞",
+      "EventType": 3,
+      "EventSubType": 303,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T19:56:15+08:00",
+      "Positions": "POINT (120.24818 22.97986)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "國1仁德南向出口"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T19:56:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX300007",
+      "EventTitle": "壅塞",
+      "Description": "null裕農路 (裕孝路至太子四街) 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T19:16:15+08:00",
+      "Positions": "POINT (120.24398 22.98993)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "裕農路 (裕孝路至太子四街)"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T19:16:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX300018",
+      "EventTitle": "壅塞",
+      "Description": "null大發路 (大發路282號至太子路) 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T19:56:15+08:00",
+      "Positions": "POINT (120.25153 22.98880)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "大發路 (大發路282號至太子路)"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T19:56:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX00078-1",
+      "EventTitle": "壅塞",
+      "Description": "中西區健康/永福路口-夏林路-永華路-平豐路-安億橋-平生路-平生/安平路口 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T17:01:15+08:00",
+      "Positions": "POINT (120.20007 22.98143)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "健康/永福路口-夏林路-永華路-平豐路-安億橋-平生路-平生/安平路口"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T17:01:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-TVPark_05",
+      "EventTitle": "壅塞",
+      "Description": "null樹谷大道快車道 (看西路至南134) 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T18:56:15+08:00",
+      "Positions": "POINT (120.26120 23.09191)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "樹谷大道快車道 (看西路至南134)"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T18:56:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX300021",
+      "EventTitle": "壅塞",
+      "Description": "null府連路 (五妃街至大同路) 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T19:36:15+08:00",
+      "Positions": "POINT (120.20976 22.98258)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "府連路 (五妃街至大同路)"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T19:36:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX000152",
+      "EventTitle": "壅塞",
+      "Description": "永康區文德路(裕信六街-中山路) 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T19:56:15+08:00",
+      "Positions": "POINT (120.24815 22.97653)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "文德路(裕信六街-中山路)"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T19:56:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX00075-1",
+      "EventTitle": "壅塞",
+      "Description": "南區大同/國民路口-國民路-南門路-南門/府前路口 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T13:49:19+08:00",
+      "Positions": "POINT (120.21598 22.96739)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "大同/國民路口-國民路-南門路-南門/府前路口"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T13:49:19+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX300020",
+      "EventTitle": "極度壅塞",
+      "Description": "null開山路 (樹林街至大同路) 發生重度壅塞",
+      "EventType": 3,
+      "EventSubType": 303,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T19:41:15+08:00",
+      "Positions": "POINT (120.20990 22.98617)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "開山路 (樹林街至大同路)"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T19:41:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX300023",
+      "EventTitle": "壅塞",
+      "Description": "null府連路 (慶東街至大同路) 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T18:01:15+08:00",
+      "Positions": "POINT (120.21530 22.98516)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "府連路 (慶東街至大同路)"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T18:01:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX000150",
+      "EventTitle": "壅塞",
+      "Description": "永康區文華路(文山路-中山路) 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T19:16:15+08:00",
+      "Positions": "POINT (120.24465 22.97604)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "文華路(文山路-中山路)"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T19:16:15+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX300022",
+      "EventTitle": "極度壅塞",
+      "Description": "null大同路一段 (五妃街至開山路) 發生重度壅塞",
+      "EventType": 3,
+      "EventSubType": 303,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T13:49:19+08:00",
+      "Positions": "POINT (120.21139 22.98257)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "大同路一段 (五妃街至開山路)"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T13:49:19+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    },
+    {
+      "EventID": "395290000H_001-01-GX00077-1",
+      "EventTitle": "壅塞",
+      "Description": "中西區健康/永福路口-健康路-平豐路-安億橋-平生路-平生/安平路口 發生壅塞",
+      "EventType": 3,
+      "EventSubType": 302,
+      "EventStep": 1,
+      "EffectiveTime": "2026-09-18T13:49:19+08:00",
+      "Positions": "POINT (120.20006 22.98144)",
+      "LocationType": 0,
+      "Location": {
+        "Other": "健康/永福路口-健康路-平豐路-安億橋-平生路-平生/安平路口"
+      },
+      "Source": "臺南市交通局",
+      "PublishTime": "2026-09-18T13:49:19+08:00",
+      "LastUpdateTime": "2026-09-18T19:59:02+08:00"
+    }
+  ]
+}

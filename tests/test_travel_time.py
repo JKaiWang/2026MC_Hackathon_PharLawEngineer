@@ -29,6 +29,22 @@ def test_duration_string_is_parsed_into_minutes():
     assert parsed["distance_m"] == 1200
 
 
+def test_encoded_polyline_is_decoded_for_route_event_matching():
+    parsed = google_routes.parse_route({
+        "routes": [{
+            "duration": "60s",
+            "distanceMeters": 1000,
+            "polyline": {"encodedPolyline": "_p~iF~ps|U_ulLnnqC_mqNvxq`@"},
+        }]
+    })
+
+    assert parsed["route_points"] == [
+        (38.5, -120.2),
+        (40.7, -120.95),
+        (43.252, -126.453),
+    ]
+
+
 def test_sub_minute_route_still_reports_one_minute():
     assert google_routes.parse_route({"routes": [{"duration": "20s"}]})["minutes"] == 1
 

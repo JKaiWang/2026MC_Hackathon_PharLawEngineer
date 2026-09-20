@@ -1,0 +1,1082 @@
+[
+ {
+  "id": "A033",
+  "campusId": "A",
+  "name": "A001 中正堂",
+  "keyword": ""
+ },
+ {
+  "id": "A018",
+  "campusId": "A",
+  "name": "A002 學生活動中心",
+  "keyword": "一活"
+ },
+ {
+  "id": "A028",
+  "campusId": "A",
+  "name": "A003 雲平大樓西棟",
+  "keyword": "雲平西棟"
+ },
+ {
+  "id": "A029",
+  "campusId": "A",
+  "name": "A004 雲平大樓東棟",
+  "keyword": "雲平東棟"
+ },
+ {
+  "id": "A014",
+  "campusId": "A",
+  "name": "A005 軍訓大樓",
+  "keyword": ""
+ },
+ {
+  "id": "A013",
+  "campusId": "A",
+  "name": "A006 唯農大樓",
+  "keyword": "成大附工"
+ },
+ {
+  "id": "A009",
+  "campusId": "A",
+  "name": "A007 光復第一宿舍",
+  "keyword": "光一舍 光1舍"
+ },
+ {
+  "id": "A008",
+  "campusId": "A",
+  "name": "A008 光復第二宿舍",
+  "keyword": "光二舍 光2舍"
+ },
+ {
+  "id": "A007",
+  "campusId": "A",
+  "name": "A009 光復第三宿舍",
+  "keyword": "光三舍 光3舍"
+ },
+ {
+  "id": "A034",
+  "campusId": "A",
+  "name": "A015 前門警衛室",
+  "keyword": "光口"
+ },
+ {
+  "id": "A015",
+  "campusId": "A",
+  "name": "A016 後門警衛亭",
+  "keyword": ""
+ },
+ {
+  "id": "A019",
+  "campusId": "A",
+  "name": "A017 火車頭倉庫",
+  "keyword": ""
+ },
+ {
+  "id": "A027",
+  "campusId": "A",
+  "name": "A101 歷史系館｜舊文學院大樓",
+  "keyword": ""
+ },
+ {
+  "id": "A023",
+  "campusId": "A",
+  "name": "A102 歷史文物館",
+  "keyword": ""
+ },
+ {
+  "id": "A022",
+  "campusId": "A",
+  "name": "A104 修齊大樓",
+  "keyword": ""
+ },
+ {
+  "id": "A006",
+  "campusId": "A",
+  "name": "A105 藝研所｜禮賢樓",
+  "keyword": ""
+ },
+ {
+  "id": "A003",
+  "campusId": "A",
+  "name": "A602 工業設計系二館",
+  "keyword": ""
+ },
+ {
+  "id": "A005",
+  "campusId": "A",
+  "name": "A603 建築科技大樓",
+  "keyword": ""
+ },
+ {
+  "id": "A004",
+  "campusId": "A",
+  "name": "A604 規劃設計大樓",
+  "keyword": ""
+ },
+ {
+  "id": "A001",
+  "campusId": "A",
+  "name": "A605 建築系館",
+  "keyword": ""
+ },
+ {
+  "id": "A031",
+  "campusId": "A",
+  "name": "A701 會計系館",
+  "keyword": ""
+ },
+ {
+  "id": "A039",
+  "campusId": "A",
+  "name": "A702 工業與資訊管理系館大樓",
+  "keyword": "工資管系館"
+ },
+ {
+  "id": "A040",
+  "campusId": "A",
+  "name": "A703 管理學院綜合大樓",
+  "keyword": "管院 統計系館 交管系館"
+ },
+ {
+  "id": "B017",
+  "campusId": "B",
+  "name": "B002 格致堂",
+  "keyword": ""
+ },
+ {
+  "id": "B006",
+  "campusId": "B",
+  "name": "B003 資訊大樓",
+  "keyword": "計網中心 計算機與網路中心 計中"
+ },
+ {
+  "id": "B004",
+  "campusId": "B",
+  "name": "B004 新園",
+  "keyword": ""
+ },
+ {
+  "id": "B091",
+  "campusId": "B",
+  "name": "B006 員生消費合作社",
+  "keyword": "合作社 分信室"
+ },
+ {
+  "id": "B052",
+  "campusId": "B",
+  "name": "B008 後門警衛室",
+  "keyword": ""
+ },
+ {
+  "id": "B062",
+  "campusId": "B",
+  "name": "B009 土木系館變電室",
+  "keyword": ""
+ },
+ {
+  "id": "B040",
+  "campusId": "B",
+  "name": "B202 綜合二館",
+  "keyword": ""
+ },
+ {
+  "id": "B008",
+  "campusId": "B",
+  "name": "B204 理化實驗大樓",
+  "keyword": ""
+ },
+ {
+  "id": "B016",
+  "campusId": "B",
+  "name": "B206 化學系館",
+  "keyword": ""
+ },
+ {
+  "id": "B104",
+  "campusId": "B",
+  "name": "B208 理學教學大樓",
+  "keyword": "物理系館 化學系館 理學院"
+ },
+ {
+  "id": "B030",
+  "campusId": "B",
+  "name": "B401 工程科學系舊館",
+  "keyword": "工科系館"
+ },
+ {
+  "id": "B031",
+  "campusId": "B",
+  "name": "B402 工程科學系新館",
+  "keyword": "工科系館"
+ },
+ {
+  "id": "B028",
+  "campusId": "B",
+  "name": "B403 資源工程系館",
+  "keyword": "資源系館"
+ },
+ {
+  "id": "B101",
+  "campusId": "B",
+  "name": "B404 資源工程系大樓",
+  "keyword": "資源系館"
+ },
+ {
+  "id": "B056",
+  "campusId": "B",
+  "name": "B404 資源系儲存室",
+  "keyword": ""
+ },
+ {
+  "id": "B027",
+  "campusId": "B",
+  "name": "B405 材料科學及工程學系館",
+  "keyword": "材料系館"
+ },
+ {
+  "id": "B103",
+  "campusId": "B",
+  "name": "B406 三系館鋼構區",
+  "keyword": ""
+ },
+ {
+  "id": "B100",
+  "campusId": "B",
+  "name": "B406 材料科學及工程學系大樓",
+  "keyword": "材料系館"
+ },
+ {
+  "id": "B026",
+  "campusId": "B",
+  "name": "B407 土木工程系館",
+  "keyword": "土木系館"
+ },
+ {
+  "id": "B044",
+  "campusId": "B",
+  "name": "B408 土木系測量館",
+  "keyword": ""
+ },
+ {
+  "id": "B045",
+  "campusId": "B",
+  "name": "B409 土木結構材料實驗室",
+  "keyword": ""
+ },
+ {
+  "id": "B025",
+  "campusId": "B",
+  "name": "B410 環境工程系館",
+  "keyword": "環工系館"
+ },
+ {
+  "id": "B041",
+  "campusId": "B",
+  "name": "B411 土木暨環工系館(卓群大樓)",
+  "keyword": ""
+ },
+ {
+  "id": "B067",
+  "campusId": "B",
+  "name": "B413 海工大樓",
+  "keyword": ""
+ },
+ {
+  "id": "B029",
+  "campusId": "B",
+  "name": "B501 資訊工程系館",
+  "keyword": "資訊系館"
+ },
+ {
+  "id": "B102",
+  "campusId": "B",
+  "name": "B502 資訊工程系大樓",
+  "keyword": "資訊系館"
+ },
+ {
+  "id": "B012",
+  "campusId": "B",
+  "name": "B801 牙醫系館",
+  "keyword": ""
+ },
+ {
+  "id": "C005",
+  "campusId": "C",
+  "name": "C401 生物醫學工程及醫學檢驗生物技術學系館",
+  "keyword": "醫工系"
+ },
+ {
+  "id": "C004",
+  "campusId": "C",
+  "name": "C403 船用機械實驗室",
+  "keyword": ""
+ },
+ {
+  "id": "C009",
+  "campusId": "C",
+  "name": "C801 成大附設醫院｜住院大樓",
+  "keyword": "成醫 住院大樓 急診"
+ },
+ {
+  "id": "C006",
+  "campusId": "C",
+  "name": "C802 醫學院教學研究大樓",
+  "keyword": ""
+ },
+ {
+  "id": "D007",
+  "campusId": "D",
+  "name": "D001 科技大樓",
+  "keyword": "慶齡工業技術發展中心 慶齡中心"
+ },
+ {
+  "id": "D011",
+  "campusId": "D",
+  "name": "D004 前門警衛室",
+  "keyword": ""
+ },
+ {
+  "id": "D004",
+  "campusId": "D",
+  "name": "D401 系統及船舶機電工程學系館",
+  "keyword": "系統系館"
+ },
+ {
+  "id": "D003",
+  "campusId": "D",
+  "name": "D402 機械工程系館",
+  "keyword": "機械系館"
+ },
+ {
+  "id": "D001",
+  "campusId": "D",
+  "name": "D404 化學工程系館",
+  "keyword": "化工系館"
+ },
+ {
+  "id": "D202",
+  "campusId": "D",
+  "name": "D501 奇美大樓｜電機工程系",
+  "keyword": "奇美樓"
+ },
+ {
+  "id": "D002",
+  "campusId": "D",
+  "name": "D502 電機工程系館",
+  "keyword": "電機系館"
+ },
+ {
+  "id": "D201",
+  "campusId": "D",
+  "name": "D504 照坤精密儀器大樓",
+  "keyword": "儀設大樓"
+ },
+ {
+  "id": "E048",
+  "campusId": "E",
+  "name": "E002 孫運璿綠建築研究大樓",
+  "keyword": ""
+ },
+ {
+  "id": "E002",
+  "campusId": "E",
+  "name": "E003 心臟科學研究中心",
+  "keyword": "心臟中心"
+ },
+ {
+  "id": "E027",
+  "campusId": "E",
+  "name": "E004 統一健康研究大樓",
+  "keyword": ""
+ },
+ {
+  "id": "E055",
+  "campusId": "E",
+  "name": "E005 前門警衛室",
+  "keyword": ""
+ },
+ {
+  "id": "E004",
+  "campusId": "E",
+  "name": "E102 臺灣文學系",
+  "keyword": ""
+ },
+ {
+  "id": "E005",
+  "campusId": "E",
+  "name": "E103 臺灣文學系",
+  "keyword": ""
+ },
+ {
+  "id": "E006",
+  "campusId": "E",
+  "name": "E105 臺灣文學系",
+  "keyword": ""
+ },
+ {
+  "id": "E053",
+  "campusId": "E",
+  "name": "E106 臺灣文學系",
+  "keyword": ""
+ },
+ {
+  "id": "E007",
+  "campusId": "E",
+  "name": "E107 臺灣文學系講堂",
+  "keyword": ""
+ },
+ {
+  "id": "E008",
+  "campusId": "E",
+  "name": "E108 臺灣文學系",
+  "keyword": ""
+ },
+ {
+  "id": "E009",
+  "campusId": "E",
+  "name": "E109 臺灣文學系",
+  "keyword": ""
+ },
+ {
+  "id": "E051",
+  "campusId": "E",
+  "name": "E110 臺灣文學系",
+  "keyword": ""
+ },
+ {
+  "id": "E049",
+  "campusId": "E",
+  "name": "E112 考古學研究所北棟",
+  "keyword": "紅樓 考古所"
+ },
+ {
+  "id": "E061",
+  "campusId": "",
+  "name": "E301 生物科技教學大樓",
+  "keyword": "生科大樓"
+ },
+ {
+  "id": "E060",
+  "campusId": "E",
+  "name": "E801 成大附設醫院｜門診大樓",
+  "keyword": ""
+ },
+ {
+  "id": "E016",
+  "campusId": "E",
+  "name": "E803 醫護大樓",
+  "keyword": ""
+ },
+ {
+  "id": "E047",
+  "campusId": "E",
+  "name": "E901 社會科學院大樓",
+  "keyword": "社科院大樓"
+ },
+ {
+  "id": "F003",
+  "campusId": "F",
+  "name": "F001 學生敬業第一宿舍",
+  "keyword": "敬一舍 敬1舍"
+ },
+ {
+  "id": "F002",
+  "campusId": "F",
+  "name": "F002 敬業第二宿舍",
+  "keyword": "敬二舍 敬2舍"
+ },
+ {
+  "id": "F005",
+  "campusId": "F",
+  "name": "F003 敬業第三宿舍",
+  "keyword": "敬三舍 敬3舍"
+ },
+ {
+  "id": "F004",
+  "campusId": "F",
+  "name": "F004 敬業校區教職員單舍",
+  "keyword": "敬單舍 敬業單舍"
+ },
+ {
+  "id": "F008",
+  "campusId": "F",
+  "name": "F005 醫師宿舍A棟",
+  "keyword": ""
+ },
+ {
+  "id": "F007",
+  "campusId": "F",
+  "name": "F006 醫師宿舍B棟",
+  "keyword": ""
+ },
+ {
+  "id": "F009",
+  "campusId": "F",
+  "name": "F007 醫師宿舍C棟",
+  "keyword": ""
+ },
+ {
+  "id": "F010",
+  "campusId": "F",
+  "name": "F401 近海水文中心",
+  "keyword": ""
+ },
+ {
+  "id": "G001",
+  "campusId": "G",
+  "name": "G001 圖書館(舊)",
+  "keyword": "舊圖 舊K館 成大未來館"
+ },
+ {
+  "id": "G211",
+  "campusId": "G",
+  "name": "G003 太子學舍",
+  "keyword": ""
+ },
+ {
+  "id": "G006",
+  "campusId": "G",
+  "name": "G004 芸青軒",
+  "keyword": "二活"
+ },
+ {
+  "id": "G009",
+  "campusId": "G",
+  "name": "G005 勝利第一宿舍",
+  "keyword": "勝一舍 勝1舍"
+ },
+ {
+  "id": "G008",
+  "campusId": "G",
+  "name": "G006 勝利第二宿舍",
+  "keyword": "勝二舍 勝2舍"
+ },
+ {
+  "id": "G007",
+  "campusId": "G",
+  "name": "G007 勝利第三宿舍",
+  "keyword": ""
+ },
+ {
+  "id": "G004",
+  "campusId": "G",
+  "name": "G008 勝利第四宿舍",
+  "keyword": "勝四舍 勝4舍"
+ },
+ {
+  "id": "G011",
+  "campusId": "G",
+  "name": "G009 勝利第六宿舍",
+  "keyword": "勝六舍 勝6舍"
+ },
+ {
+  "id": "G005",
+  "campusId": "G",
+  "name": "G010 勝利第八宿舍",
+  "keyword": "勝八舍 勝8舍"
+ },
+ {
+  "id": "G010",
+  "campusId": "G",
+  "name": "G011 勝利第九宿舍",
+  "keyword": "勝九舍 勝9舍"
+ },
+ {
+  "id": "G003",
+  "campusId": "G",
+  "name": "G023 勝三警衛室",
+  "keyword": ""
+ },
+ {
+  "id": "G002",
+  "campusId": "G",
+  "name": "G024 勝九警衛室",
+  "keyword": ""
+ },
+ {
+  "id": "L090",
+  "campusId": "L",
+  "name": "L090 警衛亭",
+  "keyword": ""
+ },
+ {
+  "id": "I026",
+  "campusId": "I",
+  "name": "中華衛星遙傳追蹤指令站",
+  "keyword": ""
+ },
+ {
+  "id": "E011",
+  "campusId": "E",
+  "name": "事務組倉庫",
+  "keyword": ""
+ },
+ {
+  "id": "E012",
+  "campusId": "E",
+  "name": "事務組資源回收場",
+  "keyword": ""
+ },
+ {
+  "id": "I010",
+  "campusId": "I",
+  "name": "修車場(航太實驗場管理室等)_I010",
+  "keyword": ""
+ },
+ {
+  "id": "J002",
+  "campusId": "J",
+  "name": "元氣屋_J002",
+  "keyword": ""
+ },
+ {
+  "id": "E020",
+  "campusId": "E",
+  "name": "公共工程中心(北面建物)",
+  "keyword": ""
+ },
+ {
+  "id": "D008",
+  "campusId": "D",
+  "name": "六九ＫＶ變電站",
+  "keyword": ""
+ },
+ {
+  "id": "Y002",
+  "campusId": "Y",
+  "name": "南科台達大樓",
+  "keyword": ""
+ },
+ {
+  "id": "K001",
+  "campusId": "K",
+  "name": "台北聯絡中心_K001",
+  "keyword": ""
+ },
+ {
+  "id": "D013",
+  "campusId": "",
+  "name": "啟端館",
+  "keyword": ""
+ },
+ {
+  "id": "I602",
+  "campusId": "I",
+  "name": "國震中心",
+  "keyword": ""
+ },
+ {
+  "id": "B083",
+  "campusId": "B",
+  "name": "地下停車場警衛室",
+  "keyword": ""
+ },
+ {
+  "id": "I014",
+  "campusId": "I",
+  "name": "垃圾場",
+  "keyword": ""
+ },
+ {
+  "id": "H201",
+  "campusId": "",
+  "name": "堆砂場",
+  "keyword": ""
+ },
+ {
+  "id": "I019-1",
+  "campusId": "I",
+  "name": "壓縮機房",
+  "keyword": ""
+ },
+ {
+  "id": "I015",
+  "campusId": "I",
+  "name": "大型實驗場_I015",
+  "keyword": ""
+ },
+ {
+  "id": "G070",
+  "campusId": "G",
+  "name": "大學路紀念門",
+  "keyword": ""
+ },
+ {
+  "id": "B047",
+  "campusId": "",
+  "name": "大新園",
+  "keyword": ""
+ },
+ {
+  "id": "L086",
+  "campusId": "L",
+  "name": "學人宿舍_50、52",
+  "keyword": ""
+ },
+ {
+  "id": "L080",
+  "campusId": "L",
+  "name": "學人宿舍_58、60",
+  "keyword": ""
+ },
+ {
+  "id": "L079",
+  "campusId": "L",
+  "name": "學人宿舍_62、64",
+  "keyword": ""
+ },
+ {
+  "id": "L081",
+  "campusId": "L",
+  "name": "學人宿舍_70、72",
+  "keyword": ""
+ },
+ {
+  "id": "L082",
+  "campusId": "L",
+  "name": "學人宿舍_74、76",
+  "keyword": ""
+ },
+ {
+  "id": "L083",
+  "campusId": "L",
+  "name": "學人宿舍_78、80",
+  "keyword": ""
+ },
+ {
+  "id": "L084",
+  "campusId": "L",
+  "name": "學人宿舍_82、84",
+  "keyword": ""
+ },
+ {
+  "id": "G014",
+  "campusId": "G",
+  "name": "學生創意討論空間(D24)",
+  "keyword": ""
+ },
+ {
+  "id": "H010",
+  "campusId": "H",
+  "name": "安南水產生技實驗及教學大樓",
+  "keyword": ""
+ },
+ {
+  "id": "A026",
+  "campusId": "A",
+  "name": "小西門及臺灣府城城垣小東門殘蹟",
+  "keyword": ""
+ },
+ {
+  "id": "E032",
+  "campusId": "E",
+  "name": "工友班",
+  "keyword": ""
+ },
+ {
+  "id": "E025",
+  "campusId": "E",
+  "name": "成大醫院",
+  "keyword": "成醫"
+ },
+ {
+  "id": "I520",
+  "campusId": "I",
+  "name": "戶外火災實驗場",
+  "keyword": ""
+ },
+ {
+  "id": "L089",
+  "campusId": "L",
+  "name": "招待所_38、40",
+  "keyword": ""
+ },
+ {
+  "id": "L085",
+  "campusId": "L",
+  "name": "招待所_54、56",
+  "keyword": ""
+ },
+ {
+  "id": "L066",
+  "campusId": "L",
+  "name": "招待所_93巷2號",
+  "keyword": ""
+ },
+ {
+  "id": "L067",
+  "campusId": "L",
+  "name": "招待所_93巷4號",
+  "keyword": ""
+ },
+ {
+  "id": "L068",
+  "campusId": "L",
+  "name": "招待所_93巷6號",
+  "keyword": ""
+ },
+ {
+  "id": "L069",
+  "campusId": "L",
+  "name": "招待所_93巷8號",
+  "keyword": ""
+ },
+ {
+  "id": "F516",
+  "campusId": "F",
+  "name": "敬業校區網球場(南面)整修工程-104年",
+  "keyword": ""
+ },
+ {
+  "id": "G017",
+  "campusId": "",
+  "name": "旺宏館",
+  "keyword": ""
+ },
+ {
+  "id": "I029",
+  "campusId": "I",
+  "name": "會客管理室",
+  "keyword": ""
+ },
+ {
+  "id": "L092",
+  "campusId": "",
+  "name": "東寧宿舍",
+  "keyword": ""
+ },
+ {
+  "id": "I030",
+  "campusId": "I",
+  "name": "歸仁校區航太科技中心宿舍",
+  "keyword": ""
+ },
+ {
+  "id": "I031",
+  "campusId": "I",
+  "name": "歸仁校名指標",
+  "keyword": ""
+ },
+ {
+  "id": "H002",
+  "campusId": "H",
+  "name": "水工中型斷面水槽",
+  "keyword": ""
+ },
+ {
+  "id": "H003",
+  "campusId": "H",
+  "name": "水工實驗水池",
+  "keyword": ""
+ },
+ {
+  "id": "H004",
+  "campusId": "H",
+  "name": "水工模型試驗場大型斷面水槽",
+  "keyword": ""
+ },
+ {
+  "id": "H001",
+  "campusId": "H",
+  "name": "水工水池、蓄水池",
+  "keyword": ""
+ },
+ {
+  "id": "H005",
+  "campusId": "H",
+  "name": "水質實驗室",
+  "keyword": ""
+ },
+ {
+  "id": "H011",
+  "campusId": "H",
+  "name": "海洋生物暨鯨豚研究中心",
+  "keyword": ""
+ },
+ {
+  "id": "H006",
+  "campusId": "H",
+  "name": "漁場實驗室",
+  "keyword": ""
+ },
+ {
+  "id": "H008",
+  "campusId": "H",
+  "name": "環境資源研究管理中心實驗大樓",
+  "keyword": ""
+ },
+ {
+  "id": "H007",
+  "campusId": "H",
+  "name": "環境資源研究管理中心資源回收廠",
+  "keyword": ""
+ },
+ {
+  "id": "I007",
+  "campusId": "I",
+  "name": "環境館與性能館",
+  "keyword": ""
+ },
+ {
+  "id": "B060",
+  "campusId": "B",
+  "name": "生命科學系溫室(舊)",
+  "keyword": ""
+ },
+ {
+  "id": "C010",
+  "campusId": "",
+  "name": "生醫卓群大樓",
+  "keyword": ""
+ },
+ {
+  "id": "H009",
+  "campusId": "H",
+  "name": "研究總中心大樓",
+  "keyword": ""
+ },
+ {
+  "id": "A020",
+  "campusId": "A",
+  "name": "空調機房",
+  "keyword": ""
+ },
+ {
+  "id": "I002",
+  "campusId": "I",
+  "name": "總變電室(航太實驗場管理室等)_I002",
+  "keyword": ""
+ },
+ {
+  "id": "E033",
+  "campusId": "E",
+  "name": "考古所(工友班倉庫)",
+  "keyword": ""
+ },
+ {
+  "id": "L076",
+  "campusId": "L",
+  "name": "職務宿舍_103號",
+  "keyword": ""
+ },
+ {
+  "id": "L072",
+  "campusId": "L",
+  "name": "職務宿舍_95號",
+  "keyword": ""
+ },
+ {
+  "id": "L074",
+  "campusId": "L",
+  "name": "職務宿舍_99號",
+  "keyword": ""
+ },
+ {
+  "id": "I011",
+  "campusId": "I",
+  "name": "能策中心 I 鍋爐燃燒實驗室",
+  "keyword": ""
+ },
+ {
+  "id": "E057",
+  "campusId": "E",
+  "name": "臺灣文學系",
+  "keyword": ""
+ },
+ {
+  "id": "E001",
+  "campusId": "E",
+  "name": "舊公衛所",
+  "keyword": ""
+ },
+ {
+  "id": "I023",
+  "campusId": "I",
+  "name": "航太中心辦公大樓",
+  "keyword": ""
+ },
+ {
+  "id": "I025",
+  "campusId": "I",
+  "name": "航太飛行控制材料結構實驗室",
+  "keyword": ""
+ },
+ {
+  "id": "I033",
+  "campusId": "I",
+  "name": "衛星推進系統實驗室",
+  "keyword": ""
+ },
+ {
+  "id": "I028",
+  "campusId": "I",
+  "name": "警衛室",
+  "keyword": ""
+ },
+ {
+  "id": "J001",
+  "campusId": "J",
+  "name": "護理之家_J001",
+  "keyword": ""
+ },
+ {
+  "id": "I019",
+  "campusId": "I",
+  "name": "變電室(高速風洞燃燒實驗室等)",
+  "keyword": ""
+ },
+ {
+  "id": "I035",
+  "campusId": "I",
+  "name": "防火安全研究中心",
+  "keyword": ""
+ },
+ {
+  "id": "I013",
+  "campusId": "I",
+  "name": "防火安全研究中心發電機室、消防幫浦室",
+  "keyword": ""
+ },
+ {
+  "id": "L062",
+  "campusId": "L",
+  "name": "附設幼稚園(原93巷24號)",
+  "keyword": ""
+ },
+ {
+  "id": "I020",
+  "campusId": "I",
+  "name": "雙推進燃燒實驗室",
+  "keyword": ""
+ },
+ {
+  "id": "I022",
+  "campusId": "I",
+  "name": "電氣室",
+  "keyword": ""
+ },
+ {
+  "id": "I027",
+  "campusId": "I",
+  "name": "風洞實驗室",
+  "keyword": ""
+ },
+ {
+  "id": "I001",
+  "campusId": "I",
+  "name": "風洞館",
+  "keyword": ""
+ },
+ {
+  "id": "H012",
+  "campusId": "H",
+  "name": "養蝦實驗室",
+  "keyword": ""
+ },
+ {
+  "id": "H012-1",
+  "campusId": "H",
+  "name": "養蝦實驗室-1",
+  "keyword": ""
+ }
+]

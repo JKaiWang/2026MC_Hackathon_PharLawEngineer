@@ -23,3 +23,7 @@ node_modules/
 dist/
 coverage/
 .DS_Store
+.playwright-mcp/
+.gcloud-codex/
+.gmail-local/
+*.changes.sqlite3*

@@ -33,13 +33,22 @@ from commute_agent.tools.ncku_geo import (
 PROVIDERS = ("auto", "estimate", "google")
 
 
-def _by_estimate(origin: str, destination: str, travel_mode: str) -> dict:
+def _resolve_waypoint(place: str | tuple[float, float]) -> dict:
+    """Normalize a place name or an already-resolved GIS coordinate."""
+    if isinstance(place, (tuple, list)) and len(place) == 2:
+        return {"status": "ok", "name": "", "lat": float(place[0]),
+                "lon": float(place[1])}
+    return resolve_place(place)
+
+
+def _by_estimate(origin: str | tuple[float, float],
+                 destination: str | tuple[float, float], travel_mode: str) -> dict:
     """用 GIS 座標估算。只有兩端都在成大校內才算得出來。"""
     result = {"status": "ok", "provider": "estimate", "is_estimate": True,
               "minutes": None, "distance_m": None, "unresolved": None,
               "origin_name": "", "destination_name": ""}
 
-    start, end = resolve_place(origin), resolve_place(destination)
+    start, end = _resolve_waypoint(origin), _resolve_waypoint(destination)
     if start["status"] != "ok":
         return {**result, "status": "unavailable", "unresolved": "origin",
                 "reason": f"起點「{origin}」不在成大地理資訊系統裡，無法估算"}
@@ -84,7 +93,9 @@ def _by_google(origin: str | tuple[float, float],
             "origin_name": name(origin), "destination_name": name(destination)}
 
 
-def get_travel_time(origin: str, destination: str, travel_mode: str = "walking",
+def get_travel_time(origin: str | tuple[float, float],
+                    destination: str | tuple[float, float],
+                    travel_mode: str = "walking",
                     provider: str | None = None) -> dict:
     """取得從起點到目的地的時間，來源由設定決定。
 

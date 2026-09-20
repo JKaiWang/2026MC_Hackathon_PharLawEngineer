@@ -17,7 +17,11 @@ FEATURE_CREDENTIALS: dict[str, tuple[str, ...]] = {
     "ncku": (),  # 成大 GIS 與停車系統為公開端點，不需金鑰
     "weather": ("CWA_API_KEY",),
     "transit": ("TDX_CLIENT_ID", "TDX_CLIENT_SECRET"),
+    # 路況事件也是 TDX 平台的 API，共用同一組 client_id/secret
+    "traffic": ("TDX_CLIENT_ID", "TDX_CLIENT_SECRET"),
     "maps": ("GOOGLE_MAPS_API_KEY",),
+    "local_llm": (),  # 本機 Ollama，不需金鑰；沒起 server 就自動略過
+    "push": ("NTFY_TOPIC",),  # 手機推播；topic 名稱等於收件位址，當秘密保管
 }
 
 
@@ -46,6 +50,13 @@ class Settings:
     travel_time_provider: str
     # 使用者的通勤偏好，一段自然語言，交給 Gemini 權衡各方案時參考
     commute_preference: str
+    # 本機 Ollama（跑 Gemma）。個資類文字（課表地點、教授信）優先在本機處理，
+    # 沒起 server 時自動退回雲端 Gemini
+    ollama_url: str
+    local_llm_model: str
+    # 手機推播（ntfy）。server 可自架；topic 知道就能收也能發，所以 repr=False
+    ntfy_server: str
+    ntfy_topic: str = field(default="", repr=False)
     # 住家地址算個資，預設留空，實際值放在 .gitignore 擋掉的 .env
     default_origin: str = field(default="", repr=False)
 
@@ -62,7 +73,8 @@ def load_settings(load_env_file: bool = True) -> Settings:
     if load_env_file:
         from dotenv import load_dotenv
 
-        load_dotenv(override=True)
+        # Deployment and test environments must be able to override local .env.
+        load_dotenv(override=False)
 
     mode = _env("PROVIDER_MODE", "fixture").lower()
     if mode not in VALID_PROVIDER_MODES:
@@ -79,6 +91,10 @@ def load_settings(load_env_file: bool = True) -> Settings:
         class_schedule_path=_env("CLASS_SCHEDULE_PATH", "data/class_schedule.json"),
         travel_time_provider=_env("TRAVEL_TIME_PROVIDER", "auto").lower(),
         commute_preference=_env("COMMUTE_PREFERENCE"),
+        ollama_url=_env("OLLAMA_URL", "http://127.0.0.1:11434").rstrip("/"),
+        local_llm_model=_env("LOCAL_LLM_MODEL", "gemma3:4b"),
+        ntfy_server=_env("NTFY_SERVER", "https://ntfy.sh").rstrip("/"),
+        ntfy_topic=_env("NTFY_TOPIC"),
         default_origin=_env("DEFAULT_ORIGIN"),
         # 與 google-genai SDK 一致：GOOGLE_API_KEY 優先，其次 GEMINI_API_KEY
         gemini_api_key=_env("GOOGLE_API_KEY") or _env("GEMINI_API_KEY"),
@@ -95,6 +111,7 @@ _VALUE_OF = {
     "TDX_CLIENT_ID": lambda s: s.tdx_client_id,
     "TDX_CLIENT_SECRET": lambda s: s.tdx_client_secret,
     "GOOGLE_MAPS_API_KEY": lambda s: s.google_maps_api_key,
+    "NTFY_TOPIC": lambda s: s.ntfy_topic,
 }
 
 

@@ -23,9 +23,13 @@ from commute_agent.tools.rain_observation import get_rain_now
 from commute_agent.skills.classroom_guide import locate_classroom
 from commute_agent.skills.compare_plans import compare_plans
 from commute_agent.skills.locate_place import locate_course_place
+from commute_agent.skills.departure_notify import notify_departure
 from commute_agent.skills.departure_plan import plan_departure
+from commute_agent.skills.mail_update import apply_course_mail
 from commute_agent.skills.parking_plan import plan_parking
-from commute_agent.skills.trip_plan import estimate_trip, plan_ride_and_walk
+from commute_agent.skills.road_watch import check_route_events
+from commute_agent.skills.trip_plan import estimate_trip
+from commute_agent.skills.trip_plan import plan_ride_and_walk
 
 _settings = load_settings()
 
@@ -65,6 +69,16 @@ root_agent = LlmAgent(
         "已經有 plan_parking 時不要再自己呼叫 get_parking_availability 比較車位。\n"
         "6. estimate_trip：估算從起點到目的地要走多久。使用者問「要走多久」、"
         "「來得及嗎」，或你要主動提醒該出發時，用這支。"
+        "can_estimate 為 False 時代表起點在校外、GIS 查不到座標，"
+        "要直接說無法估算時間，不可以自己編一個數字。"
+        "minutes 是估算值，轉述時要說「大約」。\n"
+        "7. check_route_events：查起點與目的地附近現在有沒有車禍、施工或封閉。"
+        "使用者問「路上順嗎」、「會不會塞」、「有沒有事故」，或你已經給出"
+        "estimate_trip 的路線之後，都可以主動用這支補問一次。"
+        "起點若查不到座標（例如校外住址），該端 resolved 會是 False，"
+        "只回報得到座標那端的結果，如實告知，不要假裝兩端都查了。"
+        "events 裡 type_is_code 為 True 代表只有數字分類代碼、沒有文字說明，"
+        "轉述時只能講有沒有事件、多遠、哪條路，不可以自己把代碼編成一個分類名稱。\n"
         "can_estimate 為 False 時要直接說算不出時間，不可以自己編一個數字。"
         "is_estimate 為 True 時是估算值，轉述要說「大約」；為 False 時"
         "來自 Google 實際路線，可以直接講時間。"
@@ -144,6 +158,14 @@ root_agent = LlmAgent(
         "＜機車或開車（一人一車，最高）。在同樣趕得上、天氣也撐得住的方案之間，\n"
         "優先推薦碳排較低的那個；時間差距在十分鐘以內時值得為了低碳排多花這幾分鐘，\n"
         "但要明講多花了幾分鐘換到什麼，差距很大時就以時間與舒適度為準。\n"
+        "15. apply_course_mail：使用者貼一封教授或助教的信（教室異動、停課、改線上、考試、"
+        "報告通知）時用這支。信件只在本機 Gemma 讀，不會送雲端；status 為 unavailable 代表"
+        "本機模型沒起來，要直說信件無法處理，不可以自己讀信猜。它回的是 proposed_patch，"
+        "needs_confirmation 永遠是 True——轉述變更內容並問使用者要不要套用，不可以說已經改了課表。"
+        "new_place.is_verified 為 True 才代表新教室座標經成大 GIS 驗證。\n"
+        "16. notify_departure：使用者要「該走的時候通知我手機」「推播提醒我」時用。"
+        "它會自己算該幾點出發，時間還很充裕時 status 為 skipped（不吵人），"
+        "使用者堅持現在就要一則時傳 always=True。status 為 dry_run 代表 fixture 模式沒真的送。\n"
         + _origin_rule +
         "任何工具 status 為 error 時，如實告知使用者查詢失敗，不要編造答案。"
         "校區資訊只能來自工具回傳值，你自己不知道哪棟大樓在哪個校區，不可以猜。"
@@ -153,6 +175,8 @@ root_agent = LlmAgent(
            get_next_class, plan_parking, estimate_trip, plan_ride_and_walk,
            plan_departure, get_bike_status, get_weather, get_bus_eta,
            compare_plans, locate_classroom, locate_course_place,
+           apply_course_mail, notify_departure, check_route_events,
            plan_campus_walk, plan_next_transition, get_rain_now, replan_commute,
-           draft_late_notice, check_attendance_now, draft_leave_notice],
+           draft_late_notice, check_attendance_now, draft_leave_notice,
+           apply_course_mail, notify_departure, check_route_events],
 )

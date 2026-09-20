@@ -15,7 +15,7 @@ COPY . .
 # data/user_schedule.json 是使用者個資，.dockerignore 已擋掉，
 # 沒有這個檔時網站會顯示「先上傳你的課表」畫面，屬正常起始狀態。
 
-ENV PROVIDER_MODE=fixture
+ENV PROVIDER_MODE=live
 EXPOSE 8080
 
 # Cloud Run 用 $PORT 環境變數指定實際監聽埠，本機 docker run 未設定時預設 8080；

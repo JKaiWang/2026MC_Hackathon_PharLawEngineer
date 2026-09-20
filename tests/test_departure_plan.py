@@ -33,6 +33,12 @@ def world(monkeypatch):
     monkeypatch.setattr(departure_plan, "estimate_trip",
                         lambda o, d, m: {"minutes": state["travel"], "is_estimate": True,
                                          "note": ""})
+    monkeypatch.setattr(departure_plan, "plan_bike_journey_auto",
+                        lambda o, d: {"status": "ok", "total_minutes": state["travel"],
+                                      "note": "", "ride": {"is_estimate": True},
+                                      "from_station": {}, "to_station": {},
+                                      "walk_to_station": {}, "walk_to_destination": {},
+                                      "map_link": ""})
     monkeypatch.setattr(departure_plan, "load_settings",
                         lambda: type("S", (), {"default_origin": "成大圖書館",
                                                "timezone": "Asia/Taipei"})())

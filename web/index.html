@@ -7,28 +7,28 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <style>
   :root {
-    --bg: #f6f7f9;
-    --surface: #ffffff;
-    --border: #e2e5ea;
-    --text: #1a1d21;
-    --muted: #6b7280;
-    --accent: #2f6f4f;
-    --accent-soft: #e6f2ec;
-    --now: #c2410c;
-    --grid-line: #eef0f3;
+    --bg: #f7f3ee;
+    --surface: #fffdfa;
+    --border: #dfd3c9;
+    --text: #2d2522;
+    --muted: #746963;
+    --accent: #7c1f2a;
+    --accent-soft: #f3e4e6;
+    --now: #a85b20;
+    --grid-line: #eee5de;
     --slot-h: 1.05px;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #14161a;
-      --surface: #1c1f24;
-      --border: #2c3138;
-      --text: #e8eaed;
-      --muted: #9aa3ad;
-      --accent: #6cc79a;
-      --accent-soft: #1e3a2e;
-      --now: #fb923c;
-      --grid-line: #23272d;
+      --bg: #21191a;
+      --surface: #2c2122;
+      --border: #4a3838;
+      --text: #f3e9e5;
+      --muted: #c7b6b0;
+      --accent: #e3a6ae;
+      --accent-soft: #512b30;
+      --now: #edb476;
+      --grid-line: #3b2d2e;
     }
   }
   * { box-sizing: border-box; }
@@ -109,7 +109,7 @@
   .steps li { font-size: 0.875rem; margin-bottom: 4px; }
 
   /* 週課表 */
-  .grid-head, .grid-body { display: grid; grid-template-columns: 3.25rem repeat(5, 1fr); }
+  .grid-head, .grid-body { display: grid; grid-template-columns: 3.25rem repeat(7, 1fr); }
   .grid-head div {
     text-align: center; font-size: 0.8125rem; color: var(--muted);
     padding-bottom: 8px; font-weight: 600;
@@ -168,6 +168,15 @@
                          outline: 2px solid var(--accent); border-radius: 8px; }
   .skipped { font-size: 0.8125rem; color: var(--muted); margin-top: 12px; }
   .spinner { color: var(--muted); font-size: 0.875rem; }
+
+  /* 路況事件 */
+  .event-side + .event-side { margin-top: 16px; }
+  .event { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px;
+           padding: 8px 0; border-top: 1px solid var(--border); font-size: 0.9375rem; }
+  .event:first-of-type { border-top: 0; }
+  .event .dist { font-weight: 650; color: var(--now); white-space: nowrap; }
+  .event .meta { color: var(--muted); font-size: 0.8125rem; }
+  .event-clear { color: var(--accent); font-size: 0.9375rem; }
 
   /* 出發地 */
   .origin { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
@@ -320,6 +329,7 @@
       <button type="button" class="ghost" id="jump20">跳到上課前 20 分</button>
       <button type="button" class="ghost" id="backToNow">回到現在</button>
       <button type="button" class="ghost" id="askNotify">開啟桌面通知</button>
+      <button type="button" class="ghost" id="pushPhone">推播到手機</button>
     </div>
     <div id="scenarioBox" hidden>
       <div class="chips" id="scenarioChips"></div>
@@ -358,24 +368,39 @@
   </section>
 
   <section class="card" id="hero"><p class="sub">查詢中…</p></section>
+  <section class="card" id="mailCard">
+    <p class="label">課程通知與單次調整</p>
+    <p class="note">正常課表保留。通知只調整指定日期；結束時間未提及時沿用課表並標示。</p>
+    <p><button type="button" class="btn" id="gmailConnect">連接成大 Gmail</button>
+    <button type="button" class="btn" id="gmailSync">立即收信</button></p>
+    <p id="gmailStatus" class="note">尚未連接信箱</p>
+    <div id="mailChanges"></div>
+    <input id="mailSubject" type="text" placeholder="主旨，例如：下週一教室異動" autocomplete="off"
+           style="width:100%;font:inherit;padding:8px 12px;border:1px solid var(--border);border-radius:9px;background:var(--surface);color:var(--text);margin-bottom:8px">
+    <textarea id="mailBody" rows="4" placeholder="內文貼這裡"
+           style="width:100%;font:inherit;padding:8px 12px;border:1px solid var(--border);border-radius:9px;background:var(--surface);color:var(--text)"></textarea>
+    <p style="margin:10px 0 0"><button type="button" class="btn" id="mailApply">處理通知</button></p>
+    <div id="mailResult"></div>
+  </section>
   <section class="card" id="lateCard" hidden></section>
   <section class="card" id="scanCard" hidden></section>
   <section class="card" id="classroom" hidden></section>
   <section class="card" id="modeinfo" hidden></section>
   <section class="card" id="parking" hidden></section>
+  <section class="card" id="roadEvents" hidden></section>
   <section class="card" id="walk" hidden></section>
 
   <section class="card" id="gridCard">
     <p class="label">本週課表</p>
     <div class="grid-head">
-      <div></div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div>
+      <div></div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div><div>日</div>
     </div>
     <div class="grid-body" id="grid"></div>
   </section>
 </div>
 
 <script>
-const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const START_HOUR = 8, END_HOUR = 18;
 const PX_PER_MIN = 1.05;
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => (
@@ -960,12 +985,21 @@ function renderGrid(data) {
       html += `<div class="hour" style="top:${(h - START_HOUR) * 60 * PX_PER_MIN}px"></div>`;
     }
     data.courses.filter(c => c.day === day).forEach(c => {
+      const occurrence = new Date(now);
+      occurrence.setDate(now.getDate() - nowDay + i);
+      const dateKey = `${occurrence.getFullYear()}-${String(occurrence.getMonth()+1).padStart(2,'0')}-${String(occurrence.getDate()).padStart(2,'0')}`;
+      const change = (c._changes || []).find(x => x.status === 'active' && x.effective_date === dateKey);
+      if (change) {
+        const originalTop = offset(c.start_time);
+        html += `<div class="block" style="top:${originalTop}px;height:24px;border:1px dashed #777;opacity:.65;background:#eee"><small>原 ${esc(c.start_time)} · 本次調整</small></div>`;
+        c = {...c, ...change.patch};
+      }
       const top = offset(c.start_time);
       const h = (mins(c.end_time) - mins(c.start_time)) * PX_PER_MIN;
       const key = c.name + c.start_time;
       const cls = key === curKey ? " is-current" : (key === nextKey ? " is-next" : "");
       html += `<div class="block${cls}" style="top:${top}px;height:${h - 3}px">
-        <b>${esc(c.name)}</b><small>${esc(c.location)}</small></div>`;
+        <b>${esc(c.name)}</b><small>${esc(c.location)}</small>${change ? `<small style="color:#8b2433">單次調整 ${esc(change.effective_date)} · ${esc(c.start_time)}<br>結束時間沿用課表</small>` : ''}</div>`;
     });
     if (i === nowDay) {
       const t = (now.getHours() * 60 + now.getMinutes() - START_HOUR * 60) * PX_PER_MIN;
@@ -1099,11 +1133,55 @@ function renderParking(data) {
   box.innerHTML = html;
 }
 
+function renderEventSide(label, side) {
+  if (!side.resolved) {
+    return `<p class="label">${esc(label)}</p><p class="note">${esc(side.note)}</p>`;
+  }
+  if (side.note) {
+    return `<p class="label">${esc(label)}・${esc(side.name)}</p><p class="err">${esc(side.note)}</p>`;
+  }
+  if (!side.events.length) {
+    return `<p class="label">${esc(label)}・${esc(side.name)}</p><p class="event-clear">附近沒有回報的路況事件</p>`;
+  }
+  const rows = side.events.map(e => {
+    const what = e.description || (e.type_is_code ? `分類代碼 ${e.type_code}` : "（無說明）");
+    const tag = e.category ? `<span class="badge">${esc(e.category)}</span> ` : "";
+    return `<div class="event"><div class="dist">${e.distance_m}m</div>
+      <div><b>${tag}${esc(what)}</b><div class="meta">${esc(e.road_name || "（無地點資訊）")}</div></div></div>`;
+  }).join("");
+  return `<p class="label">${esc(label)}・${esc(side.name)}</p>${rows}`;
+}
+
+function renderRoadEvents(data) {
+  const box = document.getElementById("roadEvents");
+  const r = data.road_events;
+  if (!r) { box.hidden = true; return; }
+  box.hidden = false;
+
+  if (r.status === "error") {
+    box.innerHTML = `<p class="label">路況（半徑 ${r.radius_m}m）</p><p class="err">${esc(r.note)}</p>`;
+    return;
+  }
+
+  const route = r.route;
+  if (route && route.resolved) {
+    box.innerHTML =
+      `<p class="label" style="margin-bottom:4px">路況（Google Maps 路線周邊 ${r.radius_m}m）</p>`
+      + `<div class="event-side">${renderEventSide("沿途路線", route)}</div>`;
+    return;
+  }
+
+  box.innerHTML =
+    `<p class="label" style="margin-bottom:4px">路況（端點周邊 ${r.radius_m}m）</p>`
+    + `<div class="event-side">${renderEventSide("出發地周邊", r.origin)}</div>`
+    + `<div class="event-side">${renderEventSide("目的地周邊", r.destination)}</div>`;
+}
+
 const $ = id => document.getElementById(id);
 // 一分鐘拉一次就夠：倒數由前端自己跳，不必靠輪詢，也少打成大的系統
 const POLL_MS = 60000;
 const SECTIONS = ["demoCard", "originForm", "prefForm", "modes", "hero", "scanCard", "classroom",
-                  "parking", "walk", "gridCard"];
+                  "parking", "roadEvents", "walk", "mailCard", "lateCard", "gridCard"];
 
 let bikePick = { from: null, to: null }, bikeJourney = null;
 let mode = "walking", vehicle = "機車", origin = "";
@@ -1367,6 +1445,7 @@ function load() {
       autoLoadAdvice(data);
       renderModeInfo(data);
       renderParking(data);
+      renderRoadEvents(data);
       loadWalk(data);
       renderGrid(data);
       bannerSig = "";
@@ -1730,6 +1809,80 @@ $("askNotify").addEventListener("click", () => {
   });
 });
 
+// ---- 手機推播（ntfy）與本機 Gemma 讀信：獨立於課表輪詢，按了才動 ----
+$("pushPhone").addEventListener("click", async () => {
+  $("demoNote").textContent = "正在算該幾點出發並推播…";
+  const params = new URLSearchParams({ mode, vehicle, always: "true" });
+  if (origin) params.set("origin", origin);
+  try {
+    const r = await fetch(`/api/notify/departure?${params}`, { method: "POST" });
+    const d = await r.json();
+    const label = { sent: "已推到手機", dry_run: "fixture 模式：沒有真的送，內容如下", skipped: "時間還很充裕，沒推",
+                    no_class: "課表裡沒有接下來的課", error: "推播失敗" }[d.status] || d.status;
+    $("demoNote").textContent = `${label}${d.error_message ? "：" + d.error_message : ""}`
+      + (d.message ? `｜${d.title}：${d.message.split(String.fromCharCode(10)).join(" ")}` : "");
+  } catch (e) { $("demoNote").textContent = `推播失敗：${e}`; }
+});
+
+$("mailApply").addEventListener("click", async () => {
+  const subject = $("mailSubject").value, body = $("mailBody").value;
+  if (!subject.trim() && !body.trim()) { $("mailResult").innerHTML = '<p class="err">先貼信件內容。</p>'; return; }
+  $("mailResult").innerHTML = '<p class="spinner">本機 Gemma 讀信中（約 10 秒）…</p>';
+  try {
+    const r = await fetch("/api/mail/apply", { method: "POST", headers: { "Content-Type": "application/json" },
+                                              body: JSON.stringify({ subject, body }) });
+    const d = await r.json();
+    if (d.status !== "ok") { $("mailResult").innerHTML = `<p class="err">${esc(d.note || d.error || d.status)}</p>`; return; }
+    const m = d.mail, patch = d.proposed_patch || {};
+    const kindLabel = { room_change: "教室異動", time_change: "時間異動", cancelled: "停課", online: "改線上",
+                        exam: "考試", presentation: "報告", info: "課程資訊", irrelevant: "與課程無關" }[m.kind] || m.kind;
+    const rows = Object.entries(patch).map(([k, v]) => `<div class="row"><dt>${esc(k)}</dt><dd>${esc(String(v))}</dd></div>`).join("");
+    $("mailResult").innerHTML = `
+      <p style="margin:12px 0 4px"><span class="badge">${esc(kindLabel)}</span>
+        <span class="badge">${esc(m.importance)}</span>
+        <span class="note" style="margin:0 0 0 6px">${esc(m.model)}・信心 ${m.confidence}</span></p>
+      <p style="margin:6px 0">${esc(d.note)}</p>
+      ${rows ? `<dl class="rows" style="margin-top:8px">${rows}</dl>` : ""}
+      <p class="note">${d.change?.status === 'active' ? '已建立單次調整，正常課表保留。' : '已列入待確認，尚未影響排程。'}</p>`;
+    refreshMail();
+    load();
+  } catch (e) { $("mailResult").innerHTML = `<p class="err">讀信失敗：${esc(String(e))}</p>`; }
+});
+
+async function refreshMail() {
+  try {
+    const [s, history] = await Promise.all([fetch('/api/gmail/status').then(r=>r.json()), fetch('/api/mail/changes').then(r=>r.json())]);
+    const labels = {disconnected:'尚未連接', authorizing:'等待 Google 授權', connected:'已連接', syncing:'正在收信', error:'收信需要處理'};
+    $('gmailStatus').textContent = `${labels[s.state] || s.state || '無法取得信箱狀態'}${s.last_sync ? ' · 上次同步 ' + s.last_sync : ''}${s.error ? ' · ' + s.error : ''}`;
+    const stateNames = {active:'單次調整', review:'待確認', reverted:'已復原', superseded:'已被較新通知取代'};
+    $('mailChanges').innerHTML = (history.changes || []).map(c => `<div style="border-top:1px solid #ddd;padding:12px 0">
+      <b>${esc(stateNames[c.status] || c.status)} · ${esc(c.course_name || '未配對課程')}</b>
+      <p>${esc(c.effective_date || '日期待確認')} ${c.patch.start_time ? `${esc(c.original.start_time)} → ${esc(c.patch.start_time)}` : ''}</p>
+      <p class="note">${esc(c.reason)}<br>來源：${esc(c.subject)}</p>
+      ${c.status === 'active' ? `<button class="btn" data-undo="${esc(c.id)}">復原這次調整</button>` : ''}</div>`).join('');
+  } catch (_) { $('gmailStatus').textContent = '無法連接收信服務'; }
+}
+$('gmailConnect').addEventListener('click', async () => {
+  try {
+    const r = await fetch('/api/gmail/connect', {method:'POST'}); const d = await r.json();
+    if (!r.ok) { $('gmailStatus').textContent = d.error; return; }
+    refreshMail();
+  } catch (_) { $('gmailStatus').textContent = '無法啟動授權'; }
+});
+$('gmailSync').addEventListener('click', async () => {
+  $('gmailStatus').textContent = '正在收信…';
+  try { const r = await fetch('/api/gmail/sync', {method:'POST'}); const d = await r.json();
+    if (!r.ok) { $('gmailStatus').textContent = d.error; return; }
+    refreshMail(); load();
+  } catch (_) { $('gmailStatus').textContent = '收信失敗'; }
+});
+$('mailChanges').addEventListener('click', async e => {
+  const button = e.target.closest('[data-undo]'); if (!button) return;
+  const r = await fetch('/api/mail/undo', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:button.dataset.undo})});
+  if (r.ok) { refreshMail(); load(); }
+});
+setInterval(refreshMail, 15000);
+refreshMail();
 setInterval(tick, 1000);
 load();
 </script>

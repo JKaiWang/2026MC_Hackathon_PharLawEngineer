@@ -9,6 +9,8 @@ __pycache__
 .env
 .env.*
 !.env.example
+.gmail-local/
+*.changes.sqlite3*
 
 # 使用者上傳辨識出來的個人課表，不進 image
 data/user_schedule.json

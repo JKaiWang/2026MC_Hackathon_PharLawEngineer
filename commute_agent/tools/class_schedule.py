@@ -60,6 +60,7 @@ def _course_datetimes(course: dict, now: datetime) -> tuple[datetime, datetime]:
 
 def _as_entry(course: dict, start: datetime, end: datetime, now: datetime) -> dict:
     return {
+        "temporary_change": course.get("temporary_change"),
         "name": course["name"],
         "day_zh": course.get("day_zh") or ZH_WEEKDAYS[WEEKDAY_OF[course["day"]]],
         "start_time": course["start_time"],
@@ -90,10 +91,14 @@ def find_classes(courses: list[dict], now: datetime) -> tuple[dict | None, dict 
             start, end = _course_datetimes(course, now)
             start += timedelta(weeks=week)
             end += timedelta(weeks=week)
+            from commute_agent.tools.schedule_changes import overlay
+            effective = overlay(course, start.date())
+            start = start.replace(hour=_parse_hhmm(effective['start_time'])[0], minute=_parse_hhmm(effective['start_time'])[1])
+            end = end.replace(hour=_parse_hhmm(effective['end_time'])[0], minute=_parse_hhmm(effective['end_time'])[1])
             if start <= now < end and current is None:
-                current = _as_entry(course, start, end, now)
+                current = _as_entry(effective, start, end, now)
             if start > now:
-                upcoming.append((start, _as_entry(course, start, end, now)))
+                upcoming.append((start, _as_entry(effective, start, end, now)))
                 break
 
     upcoming.sort(key=lambda pair: pair[0])
@@ -134,7 +139,8 @@ def load_courses(path: Path) -> list[dict]:
         missing = [k for k in ("name", "day", "start_time", "end_time", "location") if not course.get(k)]
         if missing:
             raise SchemaError(f"課程 {course.get('name', '?')!r} 缺少欄位：{missing}")
-    return courses
+    from commute_agent.tools.schedule_changes import attach
+    return attach(courses, path)
 
 
 def get_next_class(schedule_path: str = "", now: datetime | None = None) -> dict:

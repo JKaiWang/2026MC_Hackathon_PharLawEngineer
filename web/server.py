@@ -17,12 +17,15 @@ from __future__ import annotations
 
 import json
 import os
+import asyncio
+import hashlib
+from contextlib import asynccontextmanager, suppress
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import uvicorn
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
@@ -46,16 +49,47 @@ from commute_agent.skills.replan import replan
 from commute_agent.skills.scan_room_sign import confirm_room, scan_room_sign
 from commute_agent.tools.rain_observation import get_rain_now
 from commute_agent.skills.locate_place import locate_course_place
+from commute_agent.skills.departure_notify import notify_departure
 from commute_agent.skills.departure_plan import plan_departure
+from commute_agent.skills.mail_update import apply_course_mail
 from commute_agent.skills.recommend_plan import recommend_plan
 from commute_agent.skills.parking_plan import load_lot_locations, plan_parking
+from commute_agent.skills.road_watch import check_route_events
+from commute_agent.skills.trip_plan import estimate_trip
 from commute_agent.tools.tdx_bus import get_bus_eta
 from commute_agent.tools.youbike import get_bike_status
 from commute_agent.tools.route_link import TRAVEL_MODE_LABELS, build_route_link
+from commute_agent.tools import gmail_sync
+from commute_agent.tools.schedule_changes import changes, record, undo, overlay
 
 WEB_DIR = Path(__file__).resolve().parent
 
-app = FastAPI(title="NCKU Smart Commute")
+@asynccontextmanager
+async def lifespan(app):
+    async def poll():
+        while True:
+            if user_schedule_path().is_file() and gmail_sync.token_path().is_file():
+                await asyncio.to_thread(gmail_sync.sync, user_schedule_path())
+            await asyncio.sleep(60)
+    task = asyncio.create_task(poll())
+    yield
+    task.cancel()
+    with suppress(asyncio.CancelledError):
+        await task
+
+
+app = FastAPI(title="NCKU Smart Commute", lifespan=lifespan)
+
+
+@app.middleware('http')
+async def local_mail_access(request: Request, call_next):
+    if request.url.path.startswith(('/api/gmail', '/api/mail')):
+        if request.client.host not in ('127.0.0.1', '::1', 'testclient') or request.url.hostname not in ('127.0.0.1', 'localhost', 'testserver'):
+            return JSONResponse({'error': '信箱功能目前限本機使用'}, status_code=403)
+        origin = request.headers.get('origin')
+        if origin and origin != str(request.base_url).rstrip('/'):
+            return JSONResponse({'error': '不接受跨網站操作'}, status_code=403)
+    return await call_next(request)
 
 # 平面圖截圖放在版本庫的 picture/，直接以靜態檔供應；資料夾不存在時不掛，
 # 免得整個服務起不來（這些圖是選配，沒有圖頁面照常運作）
@@ -99,6 +133,23 @@ def resolve_now(raw: str | None, tz: str) -> tuple[datetime, bool, str | None]:
     return parsed, True, None
 
 
+BUILDING_MARKERS = ("大樓", "系館", "校區", "學院", "館")
+
+
+def _needs_building_correction(location: str, resolved_building: str) -> bool:
+    """Only flag a correction when the timetable explicitly names a building.
+
+    Labels such as ``共同教室-A1302`` identify a room, not a building.  GIS
+    may still enrich them with the building and floor, but that is not a
+    correction to the timetable's location.
+    """
+    original = (location or "").strip()
+    resolved = (resolved_building or "").strip()
+    if not original or not resolved or resolved in original:
+        return False
+    return any(marker in original for marker in BUILDING_MARKERS)
+
+
 def _resolve_building(entry: dict) -> dict:
     """用教室代碼查出真正的大樓，查不到就退回課表上的原始寫法。
 
@@ -120,7 +171,8 @@ def _resolve_building(entry: dict) -> dict:
         enriched["building_name"] = chosen["building_name"]
         enriched["floor"] = chosen["floor"]
         # 課表寫「資訊系館」但實際是「B501 資訊工程系館」，值得提醒使用者
-        enriched["corrected"] = chosen["building_name"] not in entry["location"]
+        enriched["corrected"] = _needs_building_correction(
+            entry.get("location", ""), chosen["building_name"])
     return enriched
 
 
@@ -140,7 +192,8 @@ def _with_route(entry: dict | None, origin: str, travel_mode: str) -> dict | Non
         # GIS 查不到教室代碼時，仍然把解析出的大樓名稱補上，別讓畫面空著
         if not enriched["building_name"] and place["name"]:
             enriched["building_name"] = place["name"]
-            enriched["corrected"] = place["name"] not in entry["location"]
+            enriched["corrected"] = _needs_building_correction(
+                entry.get("location", ""), place["name"])
     else:
         target = enriched["building_name"] or enriched["location"]
     enriched["place"] = {k: place.get(k) for k in
@@ -239,7 +292,8 @@ def _state(mode: str, vehicle: str, origin: str | None, now: str | None,
         return JSONResponse({**base, "has_schedule": False, "schedule_source": "",
                              "current_class": None, "next_class": None,
                              "departure": None, "parking": None, "bikes": None,
-                             "bus": None, "courses": []})
+                             "bus": None, "trip": None, "road_events": None,
+                             "courses": []})
 
     try:
         courses = load_courses(path)
@@ -248,12 +302,29 @@ def _state(mode: str, vehicle: str, origin: str | None, now: str | None,
         return JSONResponse({**base, "has_schedule": False, "courses": [],
                              "current_class": None, "next_class": None,
                              "departure": None, "parking": None, "bikes": None,
-                             "bus": None, "schedule_source": "",
+                             "bus": None, "trip": None, "road_events": None,
+                             "schedule_source": "",
                              "error": f"課表檔案讀取失敗：{exc}"}, status_code=200)
 
     current, upcoming = find_classes(courses, moment)
     next_class = _with_route(upcoming, start, mode)
 
+    trip = None
+    road_events = None
+    if next_class:
+        destination = next_class.get("building_name") or next_class["location"]
+        trip = estimate_trip(start, destination, mode) if start else None
+        # 起點與目的地都查得到座標才有意義；查不到座標的那端 check_route_events
+        # 自己會標成 resolved=False，這裡只是省掉明知道會兩端都落空的呼叫
+        destination_place = next_class.get("place")
+        road_events = check_route_events(
+            start,
+            destination,
+            travel_mode=mode,
+            destination_place=(destination_place
+                               if destination_place and destination_place.get("status") == "ok"
+                               else None),
+        ) if start else None
     # 課間轉場：正在上課或剛下課、下一堂又很快開始時，出發地就是上一堂的教室，
     # 不必使用者再填。用同一個（可能是模擬的）時間，才不會跟畫面上的課對不起來
     transition = find_transition(courses, moment, current, upcoming)
@@ -264,7 +335,6 @@ def _state(mode: str, vehicle: str, origin: str | None, now: str | None,
     attendance = (check_attendance(current, moment, place_text=(origin or "").strip(),
                                    lat=lat, lon=lon, accuracy_m=accuracy)
                   if current else None)
-
     # 出發規劃一次算完路程、緩衝與天氣；騎車模式的分段時間也在裡面，
     # 所以上面的停車查詢不再重算，避免同一趟路重複呼叫 Google。
     # 傳入使用者上傳的那份課表，否則出發時間會依範例課表算，跟畫面顯示的課不同堂；
@@ -279,6 +349,9 @@ def _state(mode: str, vehicle: str, origin: str | None, now: str | None,
         "schedule_source": source,
         "current_class": _with_route(current, start, mode),
         "next_class": next_class,
+        "trip": trip,
+        "road_events": road_events,
+        # 只有騎車開車才需要停車位，步行與大眾運輸不查，省掉七次連線
         "transition": transition,
         "attendance": attendance,
         "departure": departure,
@@ -288,6 +361,7 @@ def _state(mode: str, vehicle: str, origin: str | None, now: str | None,
         "bikes": _bikes_for(next_class, start) if mode == "bicycling" else None,
         "bus": get_bus_eta(start) if (mode == "transit" and start) else None,
         "courses": courses,
+        "schedule_changes": changes(path),
         # 雨量站的即時讀數。模擬時間下「真實的現在」沒有意義，所以略過，
         # 除非 Demo 明確開了豪雨情境（那時覆寫值就是要被採用的）
         "rain_now": (get_rain_now()
@@ -538,6 +612,71 @@ def clear_schedule() -> JSONResponse:
     if existed:
         path.unlink()
     return JSONResponse({"cleared": existed})
+
+
+# ---- 本機 Gemma 讀信 + 手機推播（與上面的課表流程獨立，方便個別 demo） ----
+
+@app.post("/api/mail/apply")
+async def mail_apply(payload: dict) -> JSONResponse:
+    """貼一封課程信，用本機 Gemma 讀成「哪門課、哪裡變了」的建議。只提議，不改課表。"""
+    subject = str(payload.get("subject") or "")
+    body = str(payload.get("body") or "")
+    if not subject.strip() and not body.strip():
+        return JSONResponse({"error": "主旨與內文都是空的"}, status_code=400)
+    path = user_schedule_path()
+    if not path.is_file():
+        return JSONResponse({'error': '請先匯入課表'}, status_code=400)
+    out = await asyncio.to_thread(apply_course_mail, subject, body, str(path))
+    if out['status'] == 'ok':
+        message_id = 'paste:' + hashlib.sha256((subject + '\n' + body).encode()).hexdigest()
+        out['change'] = record(path, message_id, subject, out['mail'])
+    return JSONResponse(out, status_code=200 if out["status"] in ("ok", "unavailable") else 400)
+
+
+@app.get('/api/gmail/status')
+def gmail_status():
+    return gmail_sync.status()
+
+
+@app.post('/api/gmail/connect')
+def gmail_connect():
+    try:
+        gmail_sync.authorize()
+        return {'status': 'authorizing'}
+    except (ValueError, ImportError) as exc:
+        return JSONResponse({'error': str(exc)}, status_code=400)
+
+
+@app.post('/api/gmail/sync')
+def gmail_refresh():
+    if not user_schedule_path().is_file():
+        return JSONResponse({'error': '請先匯入課表'}, status_code=400)
+    return gmail_sync.sync(user_schedule_path())
+
+
+@app.get('/api/mail/changes')
+def mail_changes():
+    return {'changes': changes(user_schedule_path()) if user_schedule_path().is_file() else []}
+
+
+@app.post('/api/mail/undo')
+def mail_undo(payload: dict):
+    try:
+        return undo(user_schedule_path(), str(payload.get('id', '')))
+    except ValueError as exc:
+        return JSONResponse({'error': str(exc)}, status_code=404)
+
+
+@app.post("/api/notify/departure")
+def notify(mode: str = "walking", vehicle: str = "機車", origin: str | None = None,
+           always: bool = False) -> JSONResponse:
+    """把「該幾點出發」推到手機（ntfy）。fixture 模式回 dry_run 不真的送。"""
+    if mode not in TRAVEL_MODE_LABELS:
+        return JSONResponse({"error": f"不支援的交通模式：{mode}"}, status_code=400)
+    path = user_schedule_path()
+    out = notify_departure(origin=(origin or "").strip(), travel_mode=mode, vehicle_type=vehicle,
+                           schedule_path=str(path) if path.is_file() else "", always=always)
+    return JSONResponse(out, status_code=200 if out["status"] != "error" else 502)
 
 
 @app.get("/")

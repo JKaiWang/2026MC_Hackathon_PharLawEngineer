@@ -24,8 +24,9 @@ VS Code 的 Python 擴充功能可能會干擾長時間執行的伺服器程序�
 ## 驗證
 
 ```powershell
-python -m pytest -q                              # 單元測試，不需網路與金鑰（目前 178 項）
+python -m pytest -q                              # 單元測試，不需網路與金鑰（目前 410 項）
 python scripts/smoke_ncku_gis.py 4264 65304 格致廳   # 打真實成大教室 GIS
+python scripts/smoke_tdx_road_events.py           # 打真實 TDX 路況事件（需 TDX_CLIENT_ID/SECRET）
 adk web                                          # 開 http://localhost:8000
 ```
 
@@ -42,6 +43,9 @@ adk web                                          # 開 http://localhost:8000
 | `get_next_class` | `tools/class_schedule.py` | 讀 `data/class_schedule.json`，依現在時間算出正在上的課與下一堂 |
 | `get_building_location` | `tools/ncku_geo.py` | 大樓名稱 → 經緯度，另含距離與時間估算的純函式 |
 | `plan_parking` | `skills/parking_plan.py` | 目的地大樓＋車種 → 最近且車位足夠的停車場（Skill 層，會串多個 Tool） |
+| `estimate_trip` | `skills/trip_plan.py` | 起點＋目的地 → 距離與估算時間，起點在校外時明確回報無法估算 |
+| `get_road_events` | `tools/road_events.py` | 座標＋半徑 → 周邊 TDX 即時路況事件（車禍、施工、封閉），需 `TDX_CLIENT_ID`/`TDX_CLIENT_SECRET` |
+| `check_route_events` | `skills/road_watch.py` | 起點＋目的地 → 各自周邊有沒有路況事件（Skill 層，串 `resolve_place` 與 `get_road_events`） |
 | `estimate_trip` | `skills/trip_plan.py` | 起點＋目的地 → 距離與時間，並標明來源是估算還是實際路線 |
 | `plan_ride_and_walk` | `skills/trip_plan.py` | 騎車行程拆成「騎到停車場」＋「走到教室」兩段，整趟只呼叫一次 Google |
 | `get_travel_time` | `tools/travel_time.py` | 時間來源的統一接口，依設定選 `estimate` 或 Google Routes，後者失敗會自動退回前者 |
@@ -57,6 +61,37 @@ adk web                                          # 開 http://localhost:8000
 | `get_bike_status` | `tools/youbike.py` | 某地點附近 YouBike 可借車輛或可還空位（免金鑰） |
 | `get_weather` | `tools/weather.py` | 中央氣象署臺南市鄉鎮預報，降雨機率與體感溫度（需 `CWA_API_KEY`） |
 | `get_bus_eta` | `tools/tdx_bus.py` | TDX 臺南市公車即時到站（需 `TDX_CLIENT_ID`／`SECRET`） |
+| `guess_building` | `tools/building_match.py` | 本機 Gemma 對著 `data/ncku_buildings.json`（180 棟）判斷模糊地點文字是哪一棟，答案對回清單才算數 |
+| `locate_course_place` | `skills/locate_place.py` | 課表地點 → 座標。順序：教室代碼 → GIS 原文 → **本機 Gemma** → 雲端 Gemini → Google，愈前面愈可信 |
+| `classify_course_mail` | `tools/course_mail.py` | 教授／助教的信 → 教室異動／停課／改線上／考試／報告（**只用本機 Gemma**，信不上雲端） |
+| `apply_course_mail` | `skills/mail_update.py` | 讀信 → 對到課表哪門課 → 新教室經 GIS 驗證 → 提出 patch；只提議不改課表，`needs_confirmation` 永遠 True |
+| `normalize_road_text` | `tools/road_text.py` | TDX 路況的髒地點文字（`null北外環…`）→ 行政區／路名／路段（本機 Gemma） |
+| `send_push` | `tools/push_notify.py` | 推一則通知到手機（ntfy）；fixture 模式回 dry_run 不真的送 |
+| `notify_departure` | `skills/departure_notify.py` | `plan_departure` 的結論變成手機推播：該出發＝high、來不及＝urgent、還早＝不吵人 |
+
+### 為什麼用本機 Gemma（Ollama）
+
+課表、教授信、住家附近的描述是個資。能在自己機器上讀完，就不必送雲端；
+沒網路或 Gemini 額度用完時也還能動。這是題目要 Gemma 的理由（行動端／離線／隱私），
+不是為了湊模型數。分工原則：**個資類文字 → 本機 Gemma；公開的城市資料（路況、
+天氣、公車）→ 雲端 Gemini**。
+
+```powershell
+winget install Ollama.Ollama
+ollama pull gemma3:4b                     # 3.3GB，CPU 也跑得動，每筆約 4–8 秒
+python scripts/build_ncku_buildings.py     # 重撈大樓清單（已附一份，可不跑）
+python scripts/smoke_gemma_locate.py       # 拿真實課表寫法試，順便走完 GIS 驗證
+```
+
+本機 Gemma 現在做三件事，都有 smoke 腳本：
+`scripts/smoke_gemma_locate.py`（地點→大樓）、`scripts/smoke_course_mail.py`（讀信，
+範例信在 `fixtures/course_mail/`，是手寫的、不是真信）、`scripts/smoke_road_text.py`（路況文字）。
+
+2026-09-20 用 gemma3:4b 對十筆真實輸入實測：九筆對，校外地址兩筆都正確拒絕；
+唯一錯的「資訊大樓格致廳小講堂」在流程裡會先被 GIS 教室查詢接走，輪不到模型。
+模型只准挑清單裡的名字，回的名稱對不回清單就當編造；座標一律由 GIS 提供，
+模型不准講經緯度。Ollama 沒起來時 `guess_building` 回 `unavailable`，整條流程
+自動退回雲端 Gemini，不會炸。
 
 ### 騎車行程為什麼要拆兩段
 
@@ -73,6 +108,16 @@ Google 只會算到大樓門口的騎車時間，但實際上得先停車再走�
 
 騎車段會明確指定走 Google，不受 `TRAVEL_TIME_PROVIDER` 影響——那段本來就是
 付費才有意義的部分。走路與自行車則交給預設的 `auto` 自行判斷要不要花錢。
+
+### 手機推播（ntfy）
+
+1. 手機裝 ntfy app（iOS／Android），訂閱一個自己取的長隨機 topic。
+2. `.env` 填 `NTFY_TOPIC=<同一個 topic>`（topic 就是收件位址，當秘密保管）。
+3. 網頁按「推播到手機」，或問 agent「該走的時候通知我手機」。
+   `PROVIDER_MODE=fixture` 時回 `dry_run`，不會真的送。
+
+只在需要打斷人的時候推：時間還很充裕會回 `skipped`；同一堂課同一個結論有
+`dedupe_key`，輪詢時不重推。之後上 Cloud Run 有 HTTPS 再加 Web Push 也不衝突。
 
 ## 課表視覺化頁面
 
@@ -127,6 +172,13 @@ Google 的實際路線，介面會標明這次的時間是估算還是實際路�
   重建對照表：`./.venv/bin/python scripts/build_parking_locations.py`
 - **兩套校區代碼不相通**：GIS 的 `campusId` 是大樓編號前綴（A104 → A），
   與停車系統的 `CAMPUS_CODES`（A=光復、B=成功…）不是同一套，不可互相套用。
+- **路況事件是即時 feed，fixture 只是某一刻的快照**：`parse_road_events`
+  （`tools/road_events.py`）已對真實 TDX 端點驗證過（2026-09-19），欄位命名
+  不是猜的；但事件內容本身一直在變，`fixtures/ncku_traffic/Tainan.json`
+  錄製當下成大周邊 500m 內剛好沒有事件，這是真實結果不是抓錯半徑，細節見
+  `fixtures/ncku_traffic/README.md`。事件的分類代碼（`type_code`）沒有官方
+  對照表，只在連 `description`／`category` 都沒有時才會是 `type_is_code=True`
+  （目前實測沒遇過），這種情況不要自己編一個中文分類名稱。
 
 ## 對照 CampusPulse 規劃的進度
 

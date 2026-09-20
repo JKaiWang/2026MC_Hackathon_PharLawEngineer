@@ -81,12 +81,42 @@ def parse_route(payload: dict) -> dict:
 
     seconds = float(duration[:-1])
     encoded = (route.get("polyline") or {}).get("encodedPolyline")
+    points = decode_polyline(encoded) if encoded else []
     return {
         "minutes": max(1, round(seconds / 60)),
         "distance_m": route.get("distanceMeters"),
         "seconds": round(seconds),
-        "points": decode_polyline(encoded) if encoded else [],
+        "points": points,
+        # road_watch 在既有介面使用這個欄位；保留相同資料以維持相容。
+        "route_points": points,
     }
+
+
+def decode_polyline(encoded: str) -> list[tuple[float, float]]:
+    """Decode Google's encoded polyline into ``(latitude, longitude)`` pairs."""
+    if not isinstance(encoded, str):
+        raise RoutesError("Google 路線 polyline 格式異常")
+
+    points = []
+    index = lat = lon = 0
+    while index < len(encoded):
+        values = []
+        for _ in range(2):
+            result = shift = 0
+            while True:
+                if index >= len(encoded):
+                    raise RoutesError("Google 路線 polyline 不完整")
+                byte = ord(encoded[index]) - 63
+                index += 1
+                result |= (byte & 0x1F) << shift
+                shift += 5
+                if byte < 0x20:
+                    break
+            values.append(~(result >> 1) if result & 1 else result >> 1)
+        lat += values[0]
+        lon += values[1]
+        points.append((lat / 1e5, lon / 1e5))
+    return points
 
 
 def waypoint(place: str | tuple[float, float]) -> dict:

@@ -7,6 +7,7 @@ from commute_agent.skills.locate_place import locate_course_place
 CENTROIDS = {
     "B029": {"status": "ok", "name": "B501 資訊工程系館", "lat": 22.9972, "lon": 120.2208},
     "B204": {"status": "ok", "name": "B204 理化實驗大樓", "lat": 22.9978, "lon": 120.2186},
+    "E901": {"status": "ok", "name": "E901 社會科學院大樓", "lat": 23.0019, "lon": 120.2166},
 }
 
 ROOMS = {
@@ -43,7 +44,11 @@ PLACES = {
 @pytest.fixture
 def world(monkeypatch):
     state = {"keywords": {"building_keywords": [], "room_keywords": [], "note": ""},
-             "google": {"status": "not_found"}, "asked": []}
+             "google": {"status": "not_found"}, "asked": [],
+             # 本機 Gemma 預設當作沒起來，測試才不會真的打到開發者機器上的 Ollama
+             "gemma": {"status": "unavailable", "name": "", "build_id": "",
+                       "confidence": 0.0, "reason": "", "model": "gemma3:4b"},
+             "gemma_asked": []}
 
     def fake_lookup(query):
         rows = ROOMS.get(query, [])
@@ -64,7 +69,12 @@ def world(monkeypatch):
     monkeypatch.setattr(lp, "get_building_centroid",
                         lambda bid: CENTROIDS.get(bid, {"status": "not_found",
                                                         "lat": None}))
+    def fake_guess(text):
+        state["gemma_asked"].append(text)
+        return state["gemma"]
+
     monkeypatch.setattr(lp, "ask_for_keywords", fake_keywords)
+    monkeypatch.setattr(lp, "guess_building", fake_guess)
     monkeypatch.setattr(lp, "geocode_place", lambda t: state["google"])
     lp._CACHE.clear()
     return state
@@ -160,3 +170,39 @@ def test_model_failure_does_not_raise(world):
     world["keywords"] = {"building_keywords": [], "room_keywords": [],
                          "note": "Gemini 無法回應（TimeoutError）"}
     assert locate_course_place("社科院大樓階梯教室－心理")["status"] == "not_found"
+
+
+# ---------- 本機 Gemma ----------
+
+def test_local_gemma_is_tried_before_gemini_and_verified_by_gis(world):
+    world["gemma"] = {"status": "ok", "name": "E901 社會科學院大樓", "build_id": "E901",
+                      "confidence": 0.9, "reason": "社科院即社會科學院", "model": "gemma3:4b"}
+    found = locate_course_place("社科院大樓階梯教室－心理")
+    assert found["source"] == "gemma_building"
+    assert found["is_verified"] is True
+    assert found["lat"] == CENTROIDS["E901"]["lat"]
+    assert world["asked"] == []  # 本機答得出來就不打雲端 Gemini
+
+
+def test_local_gemma_unavailable_falls_through_to_gemini(world):
+    world["keywords"] = {"building_keywords": ["社會科學院"], "room_keywords": [], "note": ""}
+    found = locate_course_place("社科院大樓階梯教室－心理")
+    assert found["source"] == "gemini_building"
+    assert world["gemma_asked"] == ["社科院大樓階梯教室－心理"]
+
+
+def test_local_gemma_building_without_gis_centroid_is_rejected(world):
+    # 模型挑了一棟 GIS 給不出座標的樓：不採用，往下走
+    world["gemma"] = {"status": "ok", "name": "Z999 幽靈大樓", "build_id": "Z999",
+                      "confidence": 0.95, "reason": "", "model": "gemma3:4b"}
+    found = locate_course_place("社科院大樓階梯教室－心理")
+    assert found["source"] != "gemma_building"
+
+
+def test_local_gemma_has_its_own_switch(world):
+    locate_course_place("社科院大樓階梯教室－心理", use_local_llm=False)
+    assert world["gemma_asked"] == []                        # 關本機就不問 Gemma
+    assert world["asked"] == ["社科院大樓階梯教室－心理"]   # 但雲端照問
+    locate_course_place("社科院大樓階梯教室－心理", use_gemini=False)
+    assert world["gemma_asked"] == ["社科院大樓階梯教室－心理"]  # 關雲端不影響本機
+    assert len(world["asked"]) == 1                          # 雲端沒再被問
